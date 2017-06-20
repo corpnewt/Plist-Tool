@@ -13,6 +13,19 @@ script_path = os.path.dirname(os.path.realpath(__file__))
 # OS Independent clear method
 def cls():
 	os.system('cls' if os.name=='nt' else 'clear')
+	# Set Windows color to blue background, white foreground
+	if os.name=='nt':
+		os.system('COLOR 17')
+	
+# Print color - found here:  https://stackoverflow.com/a/21786287
+def cprint(text, color = '0;37;44'):
+	if not os.name == 'nt':
+		# Not windows - use ANSI escapes
+		#print('\x1b[{}m{}\x1b[0m'.format(color, text))
+		print(text)
+	else:
+		print(text)
+
 
 ###########################################
 #         Plist cleaning methods          #
@@ -78,7 +91,7 @@ def check_path(path):
 	# Expand tilde
 	path = os.path.expanduser(path)
 	if not os.path.exists(path):
-		print("That file doesn't exist!")
+		cprint("That file doesn't exist!")
 		return None
 	return path
 
@@ -94,11 +107,11 @@ def grab(prompt):
 
 # Header drawing method
 def head(text = "CorpTool", width = 50):
-	print("  {}".format("#"*width))
+	cprint("  {}".format("#"*width))
 	mid_len = int(round(width/2-len(text)/2)-2)
 	middle = " #{}{}{}#".format(" "*mid_len, text, " "*((width - mid_len - len(text))-2))
-	print(middle)
-	print("#"*width)
+	cprint(middle)
+	cprint("#"*width)
 
 ###########################################
 #               Main Method               #
@@ -107,17 +120,18 @@ def head(text = "CorpTool", width = 50):
 def main():
 	cls()
 	head("Plist Tool - CorpNewt")
-	print(" ")
+	cprint(" ")
 	if current_plist:
-		print("Current Plist: {}".format(current_plist))
-		print(" ")
-	print("1. Clean plist of comments")
-	print("2. Patch Menu")
-	#print("3. Update/Install kexts")
-	print(" ")
-	print("P. Select Plist")
-	print("Q. Quit")
-	print(" ")
+		cprint("Current Plist: {}".format(current_plist))
+		cprint(" ")
+	cprint("1. Clean plist of comments")
+	cprint("2. Patch Menu")
+	#cprint("3. Update/Install kexts")
+	cprint(" ")
+	cprint("P. Select Plist")
+	cprint("Q. Quit")
+	cprint(" ")
+	
 	menu = grab("Please select an option:  ")
 	if menu.lower()[:1] == "q":
 		exit(0)
@@ -146,13 +160,13 @@ def main():
 def set_plist():
 	cls()
 	head("Plist Select")
-	print(" ")
+	cprint(" ")
 	file_input = grab("Please drag and drop the plist on the terminal:  ")
-	print(" ")
+	cprint(" ")
 	file_input = check_path(file_input)
 	if not file_input:
 		# No dice
-		print("That plist doesn't exist!")
+		cprint("That plist doesn't exist!")
 		time.sleep(5)
 		return None
 	global current_plist 
@@ -162,19 +176,19 @@ def set_plist():
 def clean_plist():
 	cls()
 	head("Clean Plist")
-	print(" ")
+	cprint(" ")
 	# Let's load it as a plist
 	plist = None
 	plist = plistlib.readPlist(current_plist)
 	# Check if we got anything
 	if plist == None:
-		print("That plist either failed to load - or was empty!")
+		cprint("That plist either failed to load - or was empty!")
 		exit(1)
 	# Iterate and strip comments
 	new_dict = check_keys(plist)
 	# Write the new file
 	plistlib.writePlist(new_dict, current_plist)
-	print("Done!\n")
+	cprint("Done!\n")
 	time.sleep(5)
 
 ###########################################
@@ -190,9 +204,9 @@ def clean_plist():
 def select_plist():
 	cls()
 	head("Plist Select")
-	print(" ")
+	cprint(" ")
 	file_input = grab("Please drag and drop the plist on the terminal:  ")
-	print(" ")
+	cprint(" ")
 	file_input = check_path(file_input)
 	if not file_input:
 		# No dice
@@ -206,15 +220,15 @@ def select_plist():
 def patch_menu():
 	cls()
 	head("Patch Menu")
-	print(" ")
+	cprint(" ")
 	if current_plist:
-		print("Current Plist: {}".format(current_plist))
-		print(" ")
-	print("1. Add Patches")
-	print("2. [someday] Gen SMBIOS")
-	print(" ")
-	print("M. Main Menu")
-	print(" ")
+		cprint("Current Plist: {}".format(current_plist))
+		cprint(" ")
+	cprint("1. Add Patches")
+	cprint("2. [someday] Gen SMBIOS")
+	cprint(" ")
+	cprint("M. Main Menu")
+	cprint(" ")
 	menu = grab("Please select an option:  ")
 	if menu.lower()[:1] == "m":
 		return
@@ -225,23 +239,23 @@ def patch_menu():
 	return
 
 def gen_smbios():
-	print("No dice, grandma.  This feature isn't added yet.")
+	cprint("No dice, grandma.  This feature isn't added yet.")
 	time.sleep(5)
 
 def add_patches():
 	cls()
 	head("Plist Patches")
-	print(" ")
+	cprint(" ")
 	if current_plist:
-		print("Current Plist: {}".format(current_plist))
-		print(" ")
+		cprint("Current Plist: {}".format(current_plist))
+		cprint(" ")
 	# List the types of patches we have
 	dir_list = []
 	for d in os.listdir(script_path+"/Resources"):
 		if os.path.isdir(script_path+"/Resources/"+d):
 			dir_list.append(d)
 	if not len(dir_list):
-		print("No patches available!")
+		cprint("No patches available!")
 		time.sleep(5)
 		return
 	
@@ -255,7 +269,7 @@ def add_patches():
 	m += "M. Main Menu\n"
 
 
-	print(m)
+	cprint(m)
 	menu = grab("Please select an option:  ")
 	
 	if menu[:1].lower() == "m":
@@ -281,17 +295,17 @@ def add_patches():
 def list_patches(name):
 	cls()
 	head("{} Patches".format(name))
-	print(" ")
+	cprint(" ")
 	if current_plist:
-		print("Current Plist: {}".format(current_plist))
-		print(" ")
+		cprint("Current Plist: {}".format(current_plist))
+		cprint(" ")
 	# List the types of patches we have
 	plist_list = []
 	for d in os.listdir(script_path+"/Resources/"+name):
 		if d.lower().endswith(".plist"):
 			plist_list.append(d)
 	if not len(plist_list):
-		print("No patches available!")
+		cprint("No patches available!")
 		time.sleep(5)
 		return
 
@@ -306,7 +320,7 @@ def list_patches(name):
 	m += "\nP. Plist Patches\n"
 	m += "M. Main Menu\n"
 
-	print(m)
+	cprint(m)
 	menu = grab("Please select an option:  ")
 
 	if menu[:1].lower() == "m":
@@ -333,21 +347,21 @@ def list_patches(name):
 def remove_patch(patch, p):
 	cls()
 	head("Patching {}".format(patch[:-len(".plist")]))
-	print(" ")
+	cprint(" ")
 	plist = None
 	plist = plistlib.readPlist(current_plist)
 	# Check if we got anything
 	if plist == None:
-		print("That plist either failed to load - or was empty!")
+		cprint("That plist either failed to load - or was empty!")
 		exit(1)
 	patch_plist = None
 	patch_plist = plistlib.readPlist(p)
 	if p == None:
-		print("That plist either failed to load - or was empty!")
+		cprint("That plist either failed to load - or was empty!")
 		exit(1)
 	final = remerge(patch_plist, plist)
 	plistlib.writePlist(final, current_plist)
-	print("Done!\n")
+	cprint("Done!\n")
 	time.sleep(5)
 
 def remerge(w, f):
@@ -454,24 +468,24 @@ def remerge_list(w, f):
 def merge_patch(patch, p):
 	cls()
 	head("Patching {}".format(patch[:-len(".plist")]))
-	print(" ")
+	cprint(" ")
 	# Let's load it as a plist
 	plist = None
 	plist = plistlib.readPlist(current_plist)
 	# Check if we got anything
 	if plist == None:
-		print("That plist either failed to load - or was empty!")
+		cprint("That plist either failed to load - or was empty!")
 		exit(1)
 	patch_plist = None
 	patch_plist = plistlib.readPlist(p)
 	if p == None:
-		print("That plist either failed to load - or was empty!")
+		cprint("That plist either failed to load - or was empty!")
 		exit(1)
 	# Both plists have loaded
 	final = merge_dicts(patch_plist, plist)
 	# Write the new file
 	plistlib.writePlist(final, current_plist)
-	print("Done!\n")
+	cprint("Done!\n")
 	time.sleep(5)
 
 def merge_dicts(f, i):
