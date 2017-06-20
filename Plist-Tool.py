@@ -362,10 +362,14 @@ def remerge(w, f):
 				del temp[key]
 				continue
 			temp[key] = remerge(w[key], f[key])
+			if not len(temp[key]):
+				del temp[key]
 		elif type(w[key]) is list:
 			if not len(w[key]):
 				del temp[key]
 			temp[key] = remerge_list(w[key], f[key])
+			if not len(temp[key]):
+				del temp[key]
 		else:
 			# Not a list or dict - remove it
 			del temp[key]
@@ -375,7 +379,9 @@ def remerge_list(w, f):
 	# Remove patches with from
 	temp = copy.deepcopy(f)
 	for item in w:
-		if type(item) is plistlib._InternalDict:
+		if item in temp:
+			temp.remove(item)
+		elif type(item) is plistlib._InternalDict:
 			if "Find" in item and "Replace" in item:
 				find = item["Find"]
 				replace = item["Replace"]
@@ -384,8 +390,8 @@ def remerge_list(w, f):
 						f_check = test["Find"]
 						r_check = test["Replace"]
 						if f_check == find and r_check == replace:
-							temp.remove(item)
-							break
+							temp.remove(test)
+							# break # Replace all entries
 					except Exception:
 						continue
 			elif "Key" in item and "Value" in item:
@@ -396,15 +402,52 @@ def remerge_list(w, f):
 						k_check = test["Key"]
 						v_check = test["Value"]
 						if k_check == key and v_check == value:
-							temp.remove(item)
-							break
+							temp.remove(test)
+							# break # Replace all entries
 					except Exception:
 						continue
-			elif item in f:
-				temp.remove(item)
-		else:
-			if item in f:
-				temp.remove(item)
+			elif "Name" in item:
+				# We have a name, but no find/replace - removing the entry
+				test_name = item["Name"]
+				if test_name.startswith("*"):
+					# Wildcard in name at beginning
+					for test in f:
+						if "Name" in test:
+							if test["Name"].lower().endswith(test_name[1:].lower()):
+								temp.remove(test)
+				elif test_name.endswith("*"):
+					# Wildcard in name at end
+					for test in f:
+						if "Name" in test:
+							if test["Name"].lower().startswith(test_name[:-1].lower()):
+								temp.remove(test)
+				else:
+					# No wildcard at either end
+					for test in f:
+						if "Name" in test:
+							if test["Name"].lower() == test_name.lower():
+								temp.remove(test)
+			elif "Device" in item:
+				# We have a device, but no key/value - removing the entry
+				test_name = item["Device"]
+				if test_name.startswith("*"):
+					# Wildcard in device at beginning
+					for test in f:
+						if "Device" in test:
+							if test["Device"].lower().endswith(test_name[1:].lower()):
+								temp.remove(test)
+				elif test_name.endswith("*"):
+					# Wildcard in device at end
+					for test in f:
+						if "Device" in test:
+							if test["Device"].lower().startswith(test_name[:-1].lower()):
+								temp.remove(test)
+				else:
+					# No wildcard at either end
+					for test in f:
+						if "Device" in test:
+							if test["Device"].lower() == test_name.lower():
+								temp.remove(test)
 	return temp
 
 
