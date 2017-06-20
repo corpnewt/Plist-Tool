@@ -8,6 +8,7 @@ import copy
 # Inital vars
 comment_prefix = "#"
 current_plist  = None
+script_path = os.path.dirname(os.path.realpath(__file__))
 
 # OS Independent clear method
 def cls():
@@ -107,19 +108,33 @@ def main():
 	cls()
 	head("Plist Tool - CorpNewt")
 	print(" ")
+	if current_plist:
+		print("Current Plist: {}".format(current_plist))
+		print(" ")
 	print("1. Clean plist of comments")
 	print("2. Patch Menu")
 	#print("3. Update/Install kexts")
 	print(" ")
+	print("P. Select Plist")
 	print("Q. Quit")
 	print(" ")
 	menu = grab("Please select an option:  ")
 	if menu.lower()[:1] == "q":
 		exit(0)
+	elif menu[:1].lower() == "p":
+		set_plist()
 	elif menu[:1] == "1":
-		clean_plist()
+		if not current_plist:
+			set_plist()
+			if current_plist:
+				clean_plist()
+		else:
+			clean_plist()
 	elif menu[:1] == "2":
-		select_plist()
+		if not current_plist:
+			select_plist()
+		else:
+			patch_menu()
 	#elif menu[:1] == "3":
 	#    update_kexts()
 	main()
@@ -128,20 +143,29 @@ def main():
 #               Clean Plist               #
 ###########################################
 
+def set_plist():
+	cls()
+	head("Plist Select")
+	print(" ")
+	file_input = grab("Please drag and drop the plist on the terminal:  ")
+	print(" ")
+	file_input = check_path(file_input)
+	if not file_input:
+		# No dice
+		print("That plist doesn't exist!")
+		time.sleep(5)
+		return None
+	global current_plist 
+	current_plist = file_input
+	return current_plist
+
 def clean_plist():
 	cls()
 	head("Clean Plist")
 	print(" ")
-	file_input = grab("Please drag and drop the plist on the terminal:  ")
-	file_input = check_path(file_input)
-	print(" ")
-	if not check_path(file_input):
-		# No dice
-		time.sleep(5)
-		return
 	# Let's load it as a plist
 	plist = None
-	plist = plistlib.readPlist(file_input)
+	plist = plistlib.readPlist(current_plist)
 	# Check if we got anything
 	if plist == None:
 		print("That plist either failed to load - or was empty!")
@@ -149,7 +173,7 @@ def clean_plist():
 	# Iterate and strip comments
 	new_dict = check_keys(plist)
 	# Write the new file
-	plistlib.writePlist(new_dict, file_input)
+	plistlib.writePlist(new_dict, current_plist)
 	print("Done!\n")
 	time.sleep(5)
 
@@ -183,6 +207,9 @@ def patch_menu():
 	cls()
 	head("Patch Menu")
 	print(" ")
+	if current_plist:
+		print("Current Plist: {}".format(current_plist))
+		print(" ")
 	print("1. Add Patches")
 	print("2. [someday] Gen SMBIOS")
 	print(" ")
@@ -205,10 +232,13 @@ def add_patches():
 	cls()
 	head("Plist Patches")
 	print(" ")
+	if current_plist:
+		print("Current Plist: {}".format(current_plist))
+		print(" ")
 	# List the types of patches we have
 	dir_list = []
-	for d in os.listdir("./Resources"):
-		if os.path.isdir("./Resources/"+d):
+	for d in os.listdir(script_path+"/Resources"):
+		if os.path.isdir(script_path+"/Resources/"+d):
 			dir_list.append(d)
 	if not len(dir_list):
 		print("No patches available!")
@@ -252,9 +282,12 @@ def list_patches(name):
 	cls()
 	head("{} Patches".format(name))
 	print(" ")
+	if current_plist:
+		print("Current Plist: {}".format(current_plist))
+		print(" ")
 	# List the types of patches we have
 	plist_list = []
-	for d in os.listdir("./Resources/"+name):
+	for d in os.listdir(script_path+"/Resources/"+name):
 		if d.lower().endswith(".plist"):
 			plist_list.append(d)
 	if not len(plist_list):
@@ -291,9 +324,9 @@ def list_patches(name):
 	if menu > 0 and menu <= len(plist_list):
 		if plist_list[menu-1].lower().startswith("remove"):
 			# We are removing things
-			remove_patch(plist_list[menu-1], os.path.abspath("./Resources/"+name+"/"+plist_list[menu-1]))
+			remove_patch(plist_list[menu-1], os.path.abspath(script_path+"/Resources/"+name+"/"+plist_list[menu-1]))
 		else:
-			merge_patch(plist_list[menu-1], os.path.abspath("./Resources/"+name+"/"+plist_list[menu-1]))
+			merge_patch(plist_list[menu-1], os.path.abspath(script_path+"/Resources/"+name+"/"+plist_list[menu-1]))
 	list_patches(name)
 	return
 
@@ -392,18 +425,11 @@ def merge_patch(patch, p):
 		print("That plist either failed to load - or was empty!")
 		exit(1)
 	# Both plists have loaded
-	final = merge(patch_plist, plist)
+	final = merge_dicts(patch_plist, plist)
 	# Write the new file
 	plistlib.writePlist(final, current_plist)
 	print("Done!\n")
 	time.sleep(5)
-
-
-def merge(f, i):
-	# Merge From Into
-	z = copy.deepcopy(i)
-	z.update(f)
-	return merge_dicts(i, z)
 
 def merge_dicts(f, i):
 	temp = copy.deepcopy(i)
