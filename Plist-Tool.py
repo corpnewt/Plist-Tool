@@ -403,7 +403,7 @@ def merge(f, i):
 	# Merge From Into
 	z = copy.deepcopy(i)
 	z.update(f)
-	return merge_dicts(z, i)
+	return merge_dicts(i, z)
 
 def merge_dicts(f, i):
 	temp = copy.deepcopy(i)
@@ -441,7 +441,8 @@ def merge_arrays(f, i):
 						if f_check == find and r_check == replace:
 							try:
 								# Clone disable flag if exists
-								item["Disable"] = test["Disable"]
+								index = temp.index(item)
+								temp[index]["Disabled"] = test["Disabled"]
 							except Exception:
 								pass
 							found = True
@@ -461,7 +462,8 @@ def merge_arrays(f, i):
 						if k_check == key and v_check == value:
 							try:
 								# Clone disable flag if exists
-								item["Disable"] = test["Disable"]
+								index = temp.index(item)
+								temp[index]["Disabled"] = test["Disabled"]
 							except Exception:
 								pass
 							found = True
