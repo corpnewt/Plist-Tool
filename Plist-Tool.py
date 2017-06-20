@@ -467,8 +467,8 @@ def merge_arrays(f, i):
 						if f_check == find and r_check == replace:
 							try:
 								# Clone disable flag if exists
-								index = temp.index(item)
-								temp[index]["Disabled"] = test["Disabled"]
+								index = temp.index(test)
+								temp[index]["Disabled"] = item["Disabled"]
 							except Exception:
 								pass
 							found = True
@@ -488,8 +488,8 @@ def merge_arrays(f, i):
 						if k_check == key and v_check == value:
 							try:
 								# Clone disable flag if exists
-								index = temp.index(item)
-								temp[index]["Disabled"] = test["Disabled"]
+								index = temp.index(test)
+								temp[index]["Disabled"] = item["Disabled"]
 							except Exception:
 								pass
 							found = True
