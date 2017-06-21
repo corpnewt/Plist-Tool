@@ -329,25 +329,22 @@ def list_patches(name):
 	elif menu[:1].lower() == "p":
 		add_patches()
 		return
-
 	try:
 		menu = int(menu)
 	except Exception:
 		add_patches()
 		return
 	if menu > 0 and menu <= len(plist_list):
-		if plist_list[menu-1].lower().startswith("remove"):
-			# We are removing things
-			remove_patch(plist_list[menu-1], os.path.abspath(script_path+"/Resources/"+name+"/"+plist_list[menu-1]))
-		else:
-			merge_patch(plist_list[menu-1], os.path.abspath(script_path+"/Resources/"+name+"/"+plist_list[menu-1]))
+		# Handle all patching at once
+		list_patch(plist_list[menu-1], os.path.abspath(script_path+"/Resources/"+name+"/"+plist_list[menu-1]))
 	list_patches(name)
 	return
 
-def remove_patch(patch, p):
+def list_patch(patch, p):
 	cls()
-	head("Patching {}".format(patch[:-len(".plist")]))
+	head("{}".format(patch[:-len(".plist")]))
 	cprint(" ")
+	# Let's load it as a plist
 	plist = None
 	plist = plistlib.readPlist(current_plist)
 	# Check if we got anything
@@ -356,11 +353,40 @@ def remove_patch(patch, p):
 		exit(1)
 	patch_plist = None
 	patch_plist = plistlib.readPlist(p)
-	if p == None:
+	if patch_plist == None:
 		cprint("That plist either failed to load - or was empty!")
 		exit(1)
-	final = remerge(patch_plist, plist)
-	plistlib.writePlist(final, current_plist)
+	if (not "Add" in patch_plist) or (not "Remove" in patch_plist) or (not "Description" in patch_plist):
+		cprint("The patch is incomplete!  Not applied!")
+		time.sleep(5)
+		return
+	# Gather our info
+	p_merge = patch_plist["Add"]
+	p_rem   = patch_plist["Remove"]
+	p_desc  = patch_plist["Description"]
+	cprint(p_desc)
+	cprint(" ")
+	menu = grab("Apply patch? (y/n):  ")
+	if menu[:1].lower() == "y":
+		merge_patch(p_merge, p_rem, p_desc, plist, patch)
+	elif menu[:1].lower() == "n":
+		return
+	else:
+		list_patch(patch, p)
+		return
+
+def merge_patch(p_merge, p_rem, p_desc, plist, patch):
+	cls()
+	head("Applying {}".format(patch[:-len(".plist")]))
+	cprint(" ")
+	cprint(p_desc)
+	cprint(" ")
+	# Both plists have loaded
+	# Remove first - then add
+	plist = remerge(p_rem, plist)
+	plist = merge_dicts(p_merge, plist)
+	# Write the new file
+	plistlib.writePlist(plist, current_plist)
 	cprint("Done!\n")
 	time.sleep(5)
 
@@ -463,30 +489,6 @@ def remerge_list(w, f):
 							if test["Device"].lower() == test_name.lower():
 								temp.remove(test)
 	return temp
-
-
-def merge_patch(patch, p):
-	cls()
-	head("Patching {}".format(patch[:-len(".plist")]))
-	cprint(" ")
-	# Let's load it as a plist
-	plist = None
-	plist = plistlib.readPlist(current_plist)
-	# Check if we got anything
-	if plist == None:
-		cprint("That plist either failed to load - or was empty!")
-		exit(1)
-	patch_plist = None
-	patch_plist = plistlib.readPlist(p)
-	if p == None:
-		cprint("That plist either failed to load - or was empty!")
-		exit(1)
-	# Both plists have loaded
-	final = merge_dicts(patch_plist, plist)
-	# Write the new file
-	plistlib.writePlist(final, current_plist)
-	cprint("Done!\n")
-	time.sleep(5)
 
 def merge_dicts(f, i):
 	temp = copy.deepcopy(i)

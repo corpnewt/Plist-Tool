@@ -2,18 +2,25 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>ACPI</key>
+	<key>Add</key>
 	<dict>
-		<key>SSDT</key>
+		<key>ACPI</key>
 		<dict>
-			<key>Generate</key>
+			<key>SSDT</key>
 			<dict>
-				<key>CStates</key>
-				<false/>
-				<key>PStates</key>
-				<false/>
+				<key>Generate</key>
+				<dict>
+					<key>CStates</key>
+					<false/>
+					<key>PStates</key>
+					<false/>
+				</dict>
 			</dict>
 		</dict>
 	</dict>
+	<key>Remove</key>
+	<dict/>
+	<key>Description</key>
+	<string>Adds the SSDT -> Generate section.  May help if your drives don't show on series 100-200 mobos.</string>
 </dict>
 </plist>

@@ -2,28 +2,35 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>ACPI</key>
-    <dict>
-        <key>DSDT</key>
-        <dict>
-            <key>Patches</key>
-            <array>
-                <dict>
-                    <key>Comment</key>
-                    <string>Rename HDAS to HDEF</string>
-                    <key>Disabled</key>
-                    <false/>
-                    <key>Find</key>
-                    <data>
-                    SERBUw==
-                    </data>
-                    <key>Replace</key>
-                    <data>
-                    SERFRg==
-                    </data>
-                </dict>
-            </array>
-        </dict>
-    </dict>
+	<key>Add</key>
+	<dict>
+		<key>ACPI</key>
+		<dict>
+			<key>DSDT</key>
+			<dict>
+				<key>Patches</key>
+				<array>
+					<dict>
+						<key>Comment</key>
+						<string>Rename HDAS to HDEF</string>
+						<key>Disabled</key>
+						<false/>
+						<key>Find</key>
+						<data>
+						SERBUw==
+						</data>
+						<key>Replace</key>
+						<data>
+						SERFRg==
+						</data>
+					</dict>
+				</array>
+			</dict>
+		</dict>
+	</dict>
+	<key>Remove</key>
+	<dict/>
+	<key>Description</key>
+	<string>Adds the HDAS to HDEF ACPI patch for Skylake and newer mobos.</string>
 </dict>
 </plist>

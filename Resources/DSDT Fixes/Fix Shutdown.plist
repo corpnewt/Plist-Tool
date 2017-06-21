@@ -2,16 +2,23 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>ACPI</key>
+	<key>Add</key>
 	<dict>
-		<key>DSDT</key>
+		<key>ACPI</key>
 		<dict>
-			<key>Fixes</key>
+			<key>DSDT</key>
 			<dict>
-				<key>FixShutdown_0004</key>
-				<true/>
+				<key>Fixes</key>
+				<dict>
+					<key>FixShutdown_0004</key>
+					<true/>
+				</dict>
 			</dict>
 		</dict>
 	</dict>
+	<key>Remove</key>
+	<dict/>
+	<key>Description</key>
+	<string>Adds the FixShutdown DSDT fix - may help if your computer restarts instead of shutting down.</string>
 </dict>
 </plist>

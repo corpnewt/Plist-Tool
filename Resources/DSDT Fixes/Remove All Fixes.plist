@@ -2,13 +2,20 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>ACPI</key>
+	<key>Add</key>
+	<dict/>
+	<key>Remove</key>
 	<dict>
-		<key>DSDT</key>
+		<key>ACPI</key>
 		<dict>
-			<key>Fixes</key>
-			<dict/>
+			<key>DSDT</key>
+			<dict>
+				<key>Fixes</key>
+				<dict/>
+			</dict>
 		</dict>
 	</dict>
+	<key>Description</key>
+	<string>Removes ALL the DSDT Fixes - can help if you get the "no driver for platform AHCI" kernel panic.</string>
 </dict>
 </plist>

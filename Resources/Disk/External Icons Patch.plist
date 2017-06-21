@@ -2,27 +2,34 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>KernelAndKextPatches</key>
+	<key>Add</key>
 	<dict>
-		<key>KextsToPatch</key>
-		<array>
-			<dict>
-				<key>Comment</key>
-				<string>External icons patch</string>
-				<key>Disabled</key>
-				<false/>
-				<key>Find</key>
-				<data>
-				RXh0ZXJuYWw=
-				</data>
-				<key>Name</key>
-				<string>AppleAHCIPort</string>
-				<key>Replace</key>
-				<data>
-				SW50ZXJuYWw=
-				</data>
-			</dict>
-		</array>
+		<key>KernelAndKextPatches</key>
+		<dict>
+			<key>KextsToPatch</key>
+			<array>
+				<dict>
+					<key>Comment</key>
+					<string>External icons patch</string>
+					<key>Disabled</key>
+					<false/>
+					<key>Find</key>
+					<data>
+					RXh0ZXJuYWw=
+					</data>
+					<key>Name</key>
+					<string>AppleAHCIPort</string>
+					<key>Replace</key>
+					<data>
+					SW50ZXJuYWw=
+					</data>
+				</dict>
+			</array>
+		</dict>
 	</dict>
+	<key>Remove</key>
+	<dict/>
+	<key>Description</key>
+	<string>Patches AppleAHCIPort to make internal drives appear internal.</string>
 </dict>
 </plist>
