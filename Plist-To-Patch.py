@@ -6,8 +6,14 @@ import time
 script_path = os.path.dirname(os.path.realpath(__file__))
 
 def create_patch(add, remove, description):
-    add_plist = plistlib.readPlist(add)
-    rem_plist = plistlib.readPlist(remove)
+    if add == "":
+        add_plist = {}
+    else:
+        add_plist = plistlib.readPlist(add)
+    if remove == "":
+        rem_plist = {}
+    else:
+        rem_plist = plistlib.readPlist(remove)
     try:
         new_plist = { "Add": add_plist, "Remove": rem_plist, "Description": desc }
     except Exception:
