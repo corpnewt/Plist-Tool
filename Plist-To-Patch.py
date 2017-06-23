@@ -5,19 +5,8 @@ import time
 
 script_path = os.path.dirname(os.path.realpath(__file__))
 
-def create_patch(add, remove, description):
-    if add == "":
-        add_plist = {}
-    else:
-        add_plist = plistlib.readPlist(add)
-    if remove == "":
-        rem_plist = {}
-    else:
-        rem_plist = plistlib.readPlist(remove)
-    try:
-        new_plist = { "Add": add_plist, "Remove": rem_plist, "Description": desc }
-    except Exception:
-        new_plist = None
+def create_patch(add_plist = {}, rem_plist = {}, desc = ""):
+    new_plist = { "Add": add_plist, "Remove": rem_plist, "Description": desc }
     return new_plist
 
 def grab(prompt):
@@ -51,62 +40,108 @@ def check_path(path):
         return None
     return path
 
-add_plist = None
-rem_plist = None
-desc      = ""
-name      = ""
+def main():
+    
+    add_plist = None
+    rem_plist = None
+    desc      = ""
+    name      = ""
+    existing_add = None
+    existing_rem = None
+    existing_des = None
 
-cls()
+    cls()
 
-print("This script can help make plist patches for Plist-Tool")
-print("Each entry must have at least an Add or Remove section")
-print("and a description.")
-print(" ")
-print("To leave a section empty (eg you're adding but not")
-print("removing), simply press enter at the prompt.")
-print(" ")
+    print("This script can help make plist patches for Plist-Tool")
+    print("Each entry must have at least an Add or Remove section")
+    print("and a description.")
+    print(" ")
+    print("To leave a section empty (eg you're adding but not")
+    print("removing), simply press enter at the prompt.")
+    print(" ")
+    print("If you'd like to edit an existing patch, drag and")
+    print("drop it on the chat now - if you'd like to create")
+    edit_plist = grab("a new patch, just press enter:  ")
+    print(" ")
 
-add_plist = grab("Please select the plist containing the information to add:  ")
-if not add_plist == "":
-    add_plist = check_path(add_plist)
-    if not add_plist:
+    if not edit_plist == "":
+        # We need to edit
+        edit_plist = check_path(edit_plist)
+        if not edit_plist:
+            exit(1)
+        test_plist = plistlib.readPlist(edit_plist)
+        existing_add = test_plist["Add"]
+        existing_rem = test_plist["Remove"]
+        existing_des = test_plist["Description"]
+
+    add_plist = grab("Please select the plist containing the information to add:  ")
+    if not add_plist == "":
+        add_plist = check_path(add_plist)
+        if not add_plist:
+            exit(1)
+        add_plist = plistlib.readPlist(add_plist)
+    else:
+        add_plist = {}
+
+    if add_plist == {} and existing_add:
+        add_plist = existing_add
+
+    print(" ")
+
+    rem_plist = grab("Please select the plist containing the information to remove:  ")
+    if not rem_plist == "":
+        rem_plist = check_path(rem_plist)
+        if not rem_plist:
+            exit(1)
+        rem_plist = plistlib.readPlist(rem_plist)
+    else:
+        rem_plist = {}
+
+    if rem_plist == {} and existing_rem:
+        rem_plist = existing_rem
+
+    print(" ")
+
+    if add_plist == {} and rem_plist == {}:
+        print("You need to at least add or remove something...")
         exit(1)
 
-print(" ")
+    while desc == "":
+        desc = grab("Please enter the description for the patch:  ")
+        if existing_des and desc == "":
+            break
 
-rem_plist = grab("Please select the plist containing the information to remove:  ")
-if not rem_plist == "":
-    rem_plist = check_path(rem_plist)
-    if not rem_plist:
+    if desc == "" and existing_des:
+        desc = existing_des
+
+    plist_patch = create_patch(add_plist, rem_plist, desc)
+
+    if not plist_patch:
+        print("Something went wrong!")
         exit(1)
 
-print(" ")
+    print(" ")
 
-if add_plist == "" and rem_plist == "":
-    print("You need to at least add or remove something...")
-    exit(1)
+    if edit_plist == "":
 
-while desc == "":
-    desc = grab("Please enter the description for the patch:  ")
+        while name == "":
+            name = grab("Please enter the name for your patch - It will be \nlocated in the same directory as this script:  ")
+            if not name.lower().endswith(".plist"):
+                name = name + ".plist"
+            if os.path.exists(script_path + "/" + name):
+                print("That file already exists...\n")
+                name = ""
+        print("\nWriting plist...\n")
+        plistlib.writePlist(plist_patch, script_path + "/" + name)
+    else:
+        print("\nWriting plist...\n")
+        plistlib.writePlist(plist_patch, edit_plist)
 
-plist_patch = create_patch(add_plist, rem_plist, desc)
+    print("Done!\n\n")
+    again = grab("Work on another patch? (y/n):  ")
+    if again[:1].lower() == "y":
+        main()
+    else:
+        exit(0)
 
-if not plist_patch:
-    print("Something went wrong!")
-    exit(1)
-
-print(" ")
-
-while name == "":
-    name = grab("Please enter the name for your patch - It will be \nlocated in the same directory as this script:  ")
-    if not name.lower().endswith(".plist"):
-        name = name + ".plist"
-    if os.path.exists(script_path + "/" + name):
-        print("That file already exists...\n")
-        name = ""
-
-print("\nWriting plist...\n")
-plistlib.writePlist(plist_patch, script_path + "/" + name)
-print("Done!\n\n")
-grab("Press enter to exit...")
-exit(0)
+main()
