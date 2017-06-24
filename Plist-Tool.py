@@ -9,6 +9,7 @@ import copy
 comment_prefix = "#"
 current_plist  = None
 script_path = os.path.dirname(os.path.realpath(__file__))
+sleep_time = 3
 
 # OS Independent clear method
 def cls():
@@ -167,7 +168,7 @@ def set_plist():
 	if not file_input:
 		# No dice
 		cprint("That plist doesn't exist!")
-		time.sleep(5)
+		time.sleep(sleep_time)
 		return None
 	global current_plist 
 	current_plist = file_input
@@ -189,7 +190,7 @@ def clean_plist():
 	# Write the new file
 	plistlib.writePlist(new_dict, current_plist)
 	cprint("Done!\n")
-	time.sleep(5)
+	time.sleep(sleep_time)
 
 ###########################################
 #                Git Pulls                #
@@ -210,7 +211,7 @@ def select_plist():
 	file_input = check_path(file_input)
 	if not file_input:
 		# No dice
-		time.sleep(5)
+		time.sleep(sleep_time)
 		return
 	global current_plist 
 	current_plist = file_input
@@ -240,7 +241,7 @@ def patch_menu():
 
 def gen_smbios():
 	cprint("No dice, grandma.  This feature isn't added yet.")
-	time.sleep(5)
+	time.sleep(sleep_time)
 
 def add_patches():
 	cls()
@@ -256,7 +257,7 @@ def add_patches():
 			dir_list.append(d)
 	if not len(dir_list):
 		cprint("No patches available!")
-		time.sleep(5)
+		time.sleep(sleep_time)
 		return
 	
 	count = 0
@@ -306,7 +307,7 @@ def list_patches(name):
 			plist_list.append(d)
 	if not len(plist_list):
 		cprint("No patches available!")
-		time.sleep(5)
+		time.sleep(sleep_time)
 		return
 
 	count = 0
@@ -358,7 +359,7 @@ def list_patch(patch, p):
 		exit(1)
 	if (not "Add" in patch_plist) or (not "Remove" in patch_plist) or (not "Description" in patch_plist):
 		cprint("The patch is incomplete!  Not applied!")
-		time.sleep(5)
+		time.sleep(sleep_time)
 		return
 	# Gather our info
 	p_merge = patch_plist["Add"]
@@ -388,7 +389,7 @@ def merge_patch(p_merge, p_rem, p_desc, plist, patch):
 	# Write the new file
 	plistlib.writePlist(plist, current_plist)
 	cprint("Done!\n")
-	time.sleep(5)
+	time.sleep(sleep_time)
 
 def remerge(w, f):
 	# Remove patches with from
