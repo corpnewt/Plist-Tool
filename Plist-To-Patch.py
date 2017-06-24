@@ -80,6 +80,9 @@ def main():
         if not add_plist:
             exit(1)
         add_plist = plistlib.readPlist(add_plist)
+        if "Add" in add_plist:
+            # Only get the add sections
+            add_plist = add_plist["Add"]
     else:
         add_plist = {}
 
@@ -94,6 +97,9 @@ def main():
         if not rem_plist:
             exit(1)
         rem_plist = plistlib.readPlist(rem_plist)
+        if "Remove" in rem_plist:
+            # Only get the remove sections
+            rem_plist = rem_plist["Remove"]
     else:
         rem_plist = {}
 

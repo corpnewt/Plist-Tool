@@ -524,12 +524,16 @@ def merge_arrays(f, i):
 						f_check = test["Find"]
 						r_check = test["Replace"]
 						if f_check == find and r_check == replace:
+							dis = False
+							if "Disabled" in item:
+								dis = item["Disabled"]
 							try:
 								# Clone disable flag if exists
 								index = temp.index(test)
-								temp[index]["Disabled"] = item["Disabled"]
+								temp[index]["Disabled"] = dis
 							except Exception:
-								pass
+								# Always set to false if failure
+								temp[index]["Disabled"] = False
 							found = True
 							break
 					except Exception:
@@ -545,12 +549,15 @@ def merge_arrays(f, i):
 						k_check = test["Key"]
 						v_check = test["Value"]
 						if k_check == key and v_check == value:
+							dis = False
+							if "Disabled" in item:
+								dis = item["Disabled"]
 							try:
 								# Clone disable flag if exists
 								index = temp.index(test)
-								temp[index]["Disabled"] = item["Disabled"]
+								temp[index]["Disabled"] = dis
 							except Exception:
-								pass
+								temp[index]["Disabled"] = False
 							found = True
 							break
 					except Exception:
