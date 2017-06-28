@@ -535,6 +535,9 @@ def merge_arrays(f, i):
 							except Exception:
 								# Always set to false if failure
 								temp[index]["Disabled"] = False
+							if "MatchOS" in item:
+								# Clone our OS-specificness over
+								temp[index]["MatchOS"] = item["MatchOS"]
 							found = True
 							break
 					except Exception:
