@@ -127,7 +127,7 @@ def main():
 		cprint(" ")
 	cprint("1. Clean plist of comments")
 	cprint("2. Patch Menu")
-	#cprint("3. Update/Install kexts")
+	cprint("3. Boot Args")
 	cprint(" ")
 	cprint("P. Select Plist")
 	cprint("Q. Quit")
@@ -150,9 +150,148 @@ def main():
 			select_plist()
 		else:
 			patch_menu()
+	elif menu[:1] == "3":
+		if not current_plist:
+			set_plist()
+			if current_plist:
+				boot_args()
+		else:
+			boot_args()
 	#elif menu[:1] == "3":
 	#    update_kexts()
 	main()
+	
+###########################################
+#                Boot Args                #
+###########################################
+
+def boot_args():
+	cls()
+	head("Boot Args")
+	cprint(" ")
+	# Let's load it as a plist
+	plist = None
+	plist = plistlib.readPlist(current_plist)
+	# Check if we got anything
+	if plist == None:
+		cprint("That plist either failed to load - or was empty!")
+		exit(1)
+	arg_list = []
+	if "Boot" in plist:
+		if "Arguments" in plist["Boot"]:
+			try:
+				arg_list = plist["Boot"]["Arguments"].split(" ")
+			except Exception:
+				pass
+	if not len(arg_list):
+		print("No boot arguments in that plist.")
+	else:
+		print("Boot args: {}".format(" ".join(arg_list)))
+	print(" ")
+	print("1. Add Argument")
+	print("2. Remove Argument")
+	print(" ")
+	print("M. Main Menu")
+	print(" ")
+	menu = grab("Please select an option:  ")
+	if menu.lower()[:1] == "m":
+		return
+	elif menu[:1] == "1":
+		add_args()
+	elif menu[:1] == "2":
+		rem_args()
+	boot_args()
+	return
+	
+def add_args():
+	cls()
+	head("Add Boot Args")
+	cprint(" ")
+	# Let's load it as a plist
+	plist = None
+	plist = plistlib.readPlist(current_plist)
+	# Check if we got anything
+	if plist == None:
+		cprint("That plist either failed to load - or was empty!")
+		exit(1)
+	arg_list = []
+	if "Boot" in plist:
+		if "Arguments" in plist["Boot"]:
+			try:
+				arg_list = plist["Boot"]["Arguments"].split(" ")
+			except Exception:
+				pass
+	if not len(arg_list):
+		print("No boot arguments in that plist.")
+	else:
+		print("Boot args: {}".format(" ".join(arg_list)))
+	print(" ")
+	menu = grab("Please type a boot arg to add (or just enter to return):  ")
+	if menu == "":
+		return
+	for arg in arg_list:
+		if arg.lower() == menu.lower():
+			# Found it - copy anyway to match case
+			arg_list.remove(arg)
+	arg_list.append(menu)
+	if "Boot" in plist:
+		plist["Boot"]["Arguments"] = " ".join(arg_list)
+	else:
+		plist["Boot"] = { "Arguments" : " ".join(arg_list) }
+	plistlib.writePlist(plist, current_plist)
+
+
+def rem_args():
+	cls()
+	head("Remove Boot Args")
+	cprint(" ")
+	# Let's load it as a plist
+	plist = None
+	plist = plistlib.readPlist(current_plist)
+	# Check if we got anything
+	if plist == None:
+		cprint("That plist either failed to load - or was empty!")
+		exit(1)
+	arg_list = []
+	if "Boot" in plist:
+		if "Arguments" in plist["Boot"]:
+			try:
+				arg_list = plist["Boot"]["Arguments"].split(" ")
+			except Exception:
+				pass
+	if not len(arg_list):
+		print("No boot arguments in that plist!\n")
+		menu = grab("Press enter to return to the boot arg menu...")
+		return
+	
+	count = 0
+	menu_list = ""
+	for arg in arg_list:
+		count += 1
+		menu_list += "{}. {}\n".format(count, arg)
+	
+	menu_list = "Current Arguments:\n\n" + menu_list
+	print(menu_list)
+	print(" ")
+	menu = grab("Please select a boot arg to remove (or just enter to return):  ")
+	
+	if menu == "":
+		return
+	
+	try:
+		menu = int(menu)
+	except Exception:
+		rem_args()
+		return
+	
+	if menu > 0 and menu <= len(arg_list):
+		arg_list.remove(arg_list[menu-1])
+	if "Boot" in plist:
+		plist["Boot"]["Arguments"] = " ".join(arg_list)
+	else:
+		plist["Boot"] = { "Arguments" : " ".join(arg_list) }
+	plistlib.writePlist(plist, current_plist)
+	
 
 ###########################################
 #               Clean Plist               #
