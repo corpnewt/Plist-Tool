@@ -10,6 +10,23 @@ comment_prefix = "#"
 current_plist  = None
 script_path = os.path.dirname(os.path.realpath(__file__))
 sleep_time = 3
+available_args = [
+		"-v",
+		"-x",
+		"npci=0x2000",
+		"npci=0x3000",
+		"dart=0",
+		"nv_disable=1",
+		"nvda_drv=1",
+		"-xcpm",
+		"slide=0",
+		"cpus=1",
+		"-gux_defer_usb2",
+		"-gux_no_idle",
+		"-gux_nosleep",
+		"kext-dev-mode=1",
+		"rootless=0"
+]
 
 # OS Independent clear method
 def cls():
@@ -184,15 +201,15 @@ def boot_args():
 			except Exception:
 				pass
 	if not len(arg_list):
-		print("No boot arguments in that plist.")
+		cprint("No boot arguments in that plist.")
 	else:
-		print("Boot args: {}".format(" ".join(arg_list)))
-	print(" ")
-	print("1. Add Argument")
-	print("2. Remove Argument")
-	print(" ")
-	print("M. Main Menu")
-	print(" ")
+		cprint("Boot args: {}".format(" ".join(arg_list)))
+	cprint(" ")
+	cprint("1. Add Argument")
+	cprint("2. Remove Argument")
+	cprint(" ")
+	cprint("M. Main Menu")
+	cprint(" ")
 	menu = grab("Please select an option:  ")
 	if menu.lower()[:1] == "m":
 		return
@@ -222,13 +239,62 @@ def add_args():
 			except Exception:
 				pass
 	if not len(arg_list):
-		print("No boot arguments in that plist.")
+		cprint("No boot arguments in that plist.")
 	else:
-		print("Boot args: {}".format(" ".join(arg_list)))
-	print(" ")
-	menu = grab("Please type a boot arg to add (or just enter to return):  ")
-	if menu == "":
+		cprint("Boot args: {}".format(" ".join(arg_list)))
+	cprint(" ")
+	
+	count = 0
+	arg_menu = ""
+	for arg in available_args:
+		# Give a list of available args
+		count += 1
+		found = False
+		for a in arg_list:
+			if a.lower() == arg.lower():
+				found = True
+				break
+		# Pad count
+		arg_count = len(available_args)
+		arg_count_string = str(arg_count)
+		count_string = str(count)
+		if len(count_string) < len(arg_count_string):
+			pad_amount = len(arg_count_string) - len(count_string)
+			count_string = (" "*pad_amount)+count_string
+		if found:
+			arg_menu += "[#] {}. {}\n".format(count_string, arg)
+		else:
+			arg_menu += "[ ] {}. {}\n".format(count_string, arg)
+	
+	cprint(arg_menu)
+	cprint("C. Custom Arg")
+	cprint("M. Boot Args Menu\n")
+		
+	cust_arg = False
+	menu = grab("Please select an option:  ")
+	if menu.lower() == "m":
 		return
+	elif menu.lower() == "c":
+		cust_arg = True
+		if not len(arg_list):
+			arg_string = "No boot arguments in that plist."
+		else:
+			arg_string = "Boot args: {}".format(" ".join(arg_list))
+		menu = custom_arg(arg_string)
+	
+	if menu == "":
+		add_args()
+		return
+	
+	if not cust_arg:
+		try:
+			menu = int(menu)
+		except Exception:
+			add_args()
+			return
+		if menu > 0 and menu <= len(available_args):
+			menu = available_args[menu-1]
+		
 	for arg in arg_list:
 		if arg.lower() == menu.lower():
 			# Found it - copy anyway to match case
@@ -239,7 +305,18 @@ def add_args():
 	else:
 		plist["Boot"] = { "Arguments" : " ".join(arg_list) }
 	plistlib.writePlist(plist, current_plist)
-
+	add_args()
+	return
+	
+	
+def custom_arg(arg_list):
+	cls()
+	head("Input Custom Boot Args")
+	cprint(" ")
+	cprint(arg_list)
+	cprint(" ")
+	menu = grab("Please enter a boot arg:  ")
+	return menu
 
 def rem_args():
 	cls()
@@ -260,7 +337,7 @@ def rem_args():
 			except Exception:
 				pass
 	if not len(arg_list):
-		print("No boot arguments in that plist!\n")
+		cprint("No boot arguments in that plist!\n")
 		menu = grab("Press enter to return to the boot arg menu...")
 		return
 	
@@ -271,11 +348,15 @@ def rem_args():
 		menu_list += "{}. {}\n".format(count, arg)
 	
 	menu_list = "Current Arguments:\n\n" + menu_list
-	print(menu_list)
-	print(" ")
-	menu = grab("Please select a boot arg to remove (or just enter to return):  ")
+	cprint(menu_list)
+	cprint(" ")
+	cprint("M. Boot Args Menu\n")
+	menu = grab("Please select a boot arg to remove:  ")
 	
 	if menu == "":
+		rem_args()
+		return
+	elif menu.lower() == "m":
 		return
 	
 	try:
@@ -291,6 +372,8 @@ def rem_args():
 	else:
 		plist["Boot"] = { "Arguments" : " ".join(arg_list) }
 	plistlib.writePlist(plist, current_plist)
+	rem_args()
+	return
 	
 
 ###########################################
