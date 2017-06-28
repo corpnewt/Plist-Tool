@@ -196,6 +196,13 @@
 				</dict>
 			</array>
 		</dict>
+		<key>SystemParameters</key>
+		<dict>
+			<key>InjectKexts</key>
+			<string>Yes</string>
+			<key>InjectSystemID</key>
+			<true/>
+		</dict>
 	</dict>
 	<key>Remove</key>
 	<dict>
