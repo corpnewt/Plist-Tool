@@ -197,7 +197,8 @@ def boot_args():
 	if "Boot" in plist:
 		if "Arguments" in plist["Boot"]:
 			try:
-				arg_list = plist["Boot"]["Arguments"].split(" ")
+				if len(plist["Boot"]["Arguments"]):
+					arg_list = plist["Boot"]["Arguments"].split(" ")
 			except Exception:
 				pass
 	if not len(arg_list):
@@ -235,7 +236,8 @@ def add_args():
 	if "Boot" in plist:
 		if "Arguments" in plist["Boot"]:
 			try:
-				arg_list = plist["Boot"]["Arguments"].split(" ")
+				if len(plist["Boot"]["Arguments"]):
+					arg_list = plist["Boot"]["Arguments"].split(" ")
 			except Exception:
 				pass
 	if not len(arg_list):
@@ -333,7 +335,8 @@ def rem_args():
 	if "Boot" in plist:
 		if "Arguments" in plist["Boot"]:
 			try:
-				arg_list = plist["Boot"]["Arguments"].split(" ")
+				if len(plist["Boot"]["Arguments"]):
+					arg_list = plist["Boot"]["Arguments"].split(" ")
 			except Exception:
 				pass
 	if not len(arg_list):
