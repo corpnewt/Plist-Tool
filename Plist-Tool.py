@@ -793,6 +793,9 @@ def merge_arrays(f, i):
 						continue
 				if not found:
 					temp.append(item)
+			else:
+				if not item in i:
+					temp.append(item)
 		else:
 			if not item in i:
 				temp.append(item)
