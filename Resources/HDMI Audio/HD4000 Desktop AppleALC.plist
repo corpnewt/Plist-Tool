@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Add</key>
+	<dict>
+		<key>ACPI</key>
+		<dict>
+			<key>DSDT</key>
+			<dict>
+				<key>Patches</key>
+				<array>
+					<dict>
+						<key>Comment</key>
+						<string>change GFX0 to IGPU</string>
+						<key>Disabled</key>
+						<false/>
+						<key>Find</key>
+						<data>
+						R0ZYMA==
+						</data>
+						<key>Replace</key>
+						<data>
+						SUdQVQ==
+						</data>
+					</dict>
+				</array>
+			</dict>
+		</dict>
+		<key>Devices</key>
+		<dict>
+			<key>AddProperties</key>
+			<array>
+				<dict>
+					<key>Comment</key>
+					<string>hda-gfx=onboard-1 for HDMI audio</string>
+					<key>Device</key>
+					<string>IntelGFX</string>
+					<key>Disabled</key>
+					<false/>
+					<key>Key</key>
+					<string>hda-gfx</string>
+					<key>Value</key>
+					<data>
+					b25ib2FyZC0xAA==
+					</data>
+				</dict>
+				<dict>
+					<key>Comment</key>
+					<string>hda-gfx=onboard-1 for HDMI audio</string>
+					<key>Device</key>
+					<string>HDA</string>
+					<key>Disabled</key>
+					<false/>
+					<key>Key</key>
+					<string>hda-gfx</string>
+					<key>Value</key>
+					<data>
+					b25ib2FyZC0xAA==
+					</data>
+				</dict>
+				<dict>
+					<key>Comment</key>
+					<string>layout-id=3</string>
+					<key>Device</key>
+					<string>HDA</string>
+					<key>Disabled</key>
+					<false/>
+					<key>Key</key>
+					<string>layout-id</string>
+					<key>Value</key>
+					<data>
+					AwAAAA==
+					</data>
+				</dict>
+			</array>
+		</dict>
+		<key>Graphics</key>
+		<dict>
+			<key>Inject</key>
+			<dict>
+				<key>Intel</key>
+				<true/>
+			</dict>
+			<key>ig-platform-id</key>
+			<string>0x0166000a</string>
+		</dict>
+	</dict>
+	<key>Description</key>
+	<string>HD4000 Desktop AppleALC HDMI audio patch.</string>
+	<key>Remove</key>
+	<dict/>
+</dict>
+</plist>
