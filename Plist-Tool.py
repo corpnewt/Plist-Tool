@@ -4,6 +4,7 @@ import sys
 import time
 import collections
 import copy
+import traceback
 
 # Inital vars
 comment_prefix = "#"
@@ -801,5 +802,35 @@ def merge_arrays(f, i):
 				temp.append(item)
 	return temp
 
+def ex(e):
+	cls()
+	head("Exception!!!")
+	cprint(" ")
+	print("Exception:  {}".format(e))
+	cprint(" ")
+	cprint("1. Print full traceback")
+	cprint("2. Main Menu")
+	cprint("3. Quit")
+	cprint(" ")
+	resp = grab("Please select an option:  ")
+
+	if resp[:1] == "1":
+		cls()
+		head("Traceback")
+		cprint(" ")
+		traceback.print_exc()
+		cprint(" ")
+		grab("Press [enter] to return to the exception menu...")
+		ex(e)
+		return
+	elif resp[:1] == "2":
+		return
+	elif resp[:1] == "3":
+		exit(1)
+
 # Start the main method
-main()
+while True:
+	try:
+		main()
+	except Exception as e:
+		ex(e)
