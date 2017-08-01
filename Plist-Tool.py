@@ -22,6 +22,7 @@ available_args = [
 		"-xcpm",
 		"slide=0",
 		"cpus=1",
+		"-no-zp",
 		"-gux_defer_usb2",
 		"-gux_no_idle",
 		"-gux_nosleep",
