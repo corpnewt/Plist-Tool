@@ -108,6 +108,8 @@
 		</dict>
 		<key>KernelAndKextPatches</key>
 		<dict>
+			<key>AppleIntelCPUPM</key>
+			<true/>
 			<key>FakeCPUID</key>
 			<string>0x0506E3</string>
 			<key>AppleRTC</key>
@@ -215,16 +217,6 @@
 				<key>Fixes</key>
 				<dict/>
 			</dict>
-		</dict>
-		<key>KernelAndKextPatches</key>
-		<dict>
-			<key>KextsToPatch</key>
-			<array>
-				<dict>
-					<key>Name</key>
-					<string>AppleHDA*</string>
-				</dict>
-			</array>
 		</dict>
 	</dict>
 	<key>Description</key>

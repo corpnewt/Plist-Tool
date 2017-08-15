@@ -108,6 +108,8 @@
 		</dict>
 		<key>KernelAndKextPatches</key>
 		<dict>
+			<key>AppleIntelCPUPM</key>
+			<true/>
 			<key>AppleRTC</key>
 			<true/>
 			<key>AsusAICPUPM</key>
@@ -213,16 +215,6 @@
 				<key>Fixes</key>
 				<dict/>
 			</dict>
-		</dict>
-		<key>KernelAndKextPatches</key>
-		<dict>
-			<key>KextsToPatch</key>
-			<array>
-				<dict>
-					<key>Name</key>
-					<string>AppleHDA*</string>
-				</dict>
-			</array>
 		</dict>
 	</dict>
 	<key>Description</key>
