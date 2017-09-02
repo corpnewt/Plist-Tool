@@ -720,6 +720,10 @@ def remerge_list(w, f):
 
 def merge_dicts(f, i):
 	temp = copy.deepcopy(i)
+	if not type(temp) is plistlib._InternalDict:
+		# We don't have a dict - overwrite it entirely
+		temp = copy.deepcopy(f)
+		return temp
 	for key in f:
 		if type(f[key]) is list:
 			# Merge!
@@ -738,6 +742,10 @@ def merge_dicts(f, i):
 
 def merge_arrays(f, i):
 	temp = copy.deepcopy(i)
+	if not type(temp) is list:
+		# We don't have a list - overwrite it entirely
+		temp = copy.deepcopy(f)
+		return temp
 	for item in f:
 		if type(item) is str:
 			if not item in i:
@@ -828,6 +836,9 @@ def ex(e):
 		return
 	elif resp[:1] == "3":
 		exit(1)
+	else:
+		ex(e)
+		return
 
 # Start the main method
 while True:
