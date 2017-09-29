@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Add</key>
+	<dict>
+		<key>Devices</key>
+		<dict>
+			<key>Arbitrary</key>
+			<array>
+				<dict>
+					<key>Comment</key>
+					<string>USB</string>
+					<key>CustomProperties</key>
+					<array>
+						<dict>
+							<key>Disabled</key>
+							<false/>
+							<key>Key</key>
+							<string>device-id</string>
+							<key>Value</key>
+							<data>
+							L6EAAA==
+							</data>
+						</dict>
+					</array>
+					<key>PciAddr</key>
+					<string>00:14.00</string>
+				</dict>
+			</array>
+		</dict>
+	</dict>
+	<key>Remove</key>
+	<dict/>
+	<key>Description</key>
+	<string>Injects a Skylake USB property to help Kaby USB to work correctly.</string>
+</dict>
+</plist>

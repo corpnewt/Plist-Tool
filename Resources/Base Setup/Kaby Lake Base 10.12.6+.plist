@@ -78,15 +78,32 @@
 					</data>
 				</dict>
 			</array>
+			<key>Arbitrary</key>
+			<array>
+				<dict>
+					<key>Comment</key>
+					<string>USB</string>
+					<key>CustomProperties</key>
+					<array>
+						<dict>
+							<key>Disabled</key>
+							<false/>
+							<key>Key</key>
+							<string>device-id</string>
+							<key>Value</key>
+							<data>
+							L6EAAA==
+							</data>
+						</dict>
+					</array>
+					<key>PciAddr</key>
+					<string>00:14.00</string>
+				</dict>
+			</array>
 			<key>Audio</key>
 			<dict>
 				<key>Inject</key>
 				<string>1</string>
-			</dict>
-			<key>FakeID</key>
-			<dict>
-				<key>IntelGFX</key>
-				<string>0x19168086</string>
 			</dict>
 			<key>USB</key>
 			<dict>
@@ -104,7 +121,7 @@
 				<false/>
 			</dict>
 			<key>ig-platform-id</key>
-			<string>0x19120000</string>
+			<string>0x59120000</string>
 		</dict>
 		<key>KernelAndKextPatches</key>
 		<dict>
@@ -146,22 +163,6 @@
 				</dict>
 				<dict>
 					<key>Comment</key>
-					<string>10.11-SKL-1912000-4_displays</string>
-					<key>Disabled</key>
-					<false/>
-					<key>Find</key>
-					<data>
-					AQMDAw==
-					</data>
-					<key>Name</key>
-					<string>AppleIntelSKLGraphicsFramebuffer</string>
-					<key>Replace</key>
-					<data>
-					AQMEAw==
-					</data>
-				</dict>
-				<dict>
-					<key>Comment</key>
 					<string>Change 15 port limit to 26 in XHCI kext 10.12</string>
 					<key>Disabled</key>
 					<false/>
@@ -176,24 +177,6 @@
 					<key>Replace</key>
 					<data>
 					g710////Gw==
-					</data>
-				</dict>
-				<dict>
-					<key>Comment</key>
-					<string>Change 15 port limit to 30 in XHCI kext 10.11</string>
-					<key>Disabled</key>
-					<false/>
-					<key>Find</key>
-					<data>
-					g72M/v//EA==
-					</data>
-					<key>MatchOS</key>
-					<string>10.11.x</string>
-					<key>Name</key>
-					<string>AppleUSBXHCIPCI</string>
-					<key>Replace</key>
-					<data>
-					g72M/v//Hw==
 					</data>
 				</dict>
 				<dict>
@@ -236,6 +219,6 @@
 		</dict>
 	</dict>
 	<key>Description</key>
-	<string>Generalized settings for Skylake systems.</string>
+	<string>Generalized settings for Kaby Lake systems running 10.12.6+.</string>
 </dict>
 </plist>

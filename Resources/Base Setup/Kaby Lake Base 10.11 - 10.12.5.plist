@@ -78,6 +78,28 @@
 					</data>
 				</dict>
 			</array>
+			<key>Arbitrary</key>
+			<array>
+				<dict>
+					<key>Comment</key>
+					<string>USB</string>
+					<key>CustomProperties</key>
+					<array>
+						<dict>
+							<key>Disabled</key>
+							<false/>
+							<key>Key</key>
+							<string>device-id</string>
+							<key>Value</key>
+							<data>
+							L6EAAA==
+							</data>
+						</dict>
+					</array>
+					<key>PciAddr</key>
+					<string>00:14.00</string>
+				</dict>
+			</array>
 			<key>Audio</key>
 			<dict>
 				<key>Inject</key>
@@ -110,6 +132,8 @@
 		<dict>
 			<key>AppleIntelCPUPM</key>
 			<true/>
+			<key>FakeCPUID</key>
+			<string>0x0506E3</string>
 			<key>AppleRTC</key>
 			<true/>
 			<key>AsusAICPUPM</key>
@@ -162,7 +186,7 @@
 				</dict>
 				<dict>
 					<key>Comment</key>
-					<string>Change 15 port limit to 26 in XHCI kext 10.12</string>
+					<string>change 15 port limit to 26 in XHCI kext 10.12</string>
 					<key>Disabled</key>
 					<false/>
 					<key>Find</key>
@@ -180,7 +204,7 @@
 				</dict>
 				<dict>
 					<key>Comment</key>
-					<string>Change 15 port limit to 30 in XHCI kext 10.11</string>
+					<string>change 15 port limit to 30 in AppleUSBXHCIPCI</string>
 					<key>Disabled</key>
 					<false/>
 					<key>Find</key>
@@ -194,24 +218,6 @@
 					<key>Replace</key>
 					<data>
 					g72M/v//Hw==
-					</data>
-				</dict>
-				<dict>
-					<key>Comment</key>
-					<string>Change 15 port limit to 24 in XHCI kext 10.13</string>
-					<key>Disabled</key>
-					<false/>
-					<key>Find</key>
-					<data>
-					g32MEA==
-					</data>
-					<key>MatchOS</key>
-					<string>10.13.x</string>
-					<key>Name</key>
-					<string>AppleUSBXHCIPCI</string>
-					<key>Replace</key>
-					<data>
-					g32MGw==
 					</data>
 				</dict>
 			</array>
@@ -236,6 +242,6 @@
 		</dict>
 	</dict>
 	<key>Description</key>
-	<string>Generalized settings for Skylake systems.</string>
+	<string>Generalized settings for Kaby Lake systems from 10.11 - 10.12.5.</string>
 </dict>
 </plist>
