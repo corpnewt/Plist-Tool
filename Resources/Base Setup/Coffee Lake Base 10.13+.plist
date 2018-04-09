@@ -91,6 +91,11 @@
 				<key>ResetHDA</key>
 				<true/>
 			</dict>
+			<key>FakeID</key>
+			<dict>
+				<key>IntelGFX</key>
+				<string>0x59168086</string>
+			</dict>
 			<key>USB</key>
 			<dict>
 				<key>FixOwnership</key>
@@ -143,26 +148,6 @@
 					<key>Replace</key>
 					<data>
 					SW50ZXJuYWw=
-					</data>
-				</dict>
-				<dict>
-					<key>Comment</key>
-					<string>change 15 port limit to 26 in XHCI kext 10.12</string>
-					<key>Disabled</key>
-					<false/>
-					<key>Find</key>
-					<data>
-					g710////EA==
-					</data>
-					<key>InfoPlistPatch</key>
-					<false/>
-					<key>MatchOS</key>
-					<string>10.12.x</string>
-					<key>Name</key>
-					<string>AppleUSBXHCIPCI</string>
-					<key>Replace</key>
-					<data>
-					g710////Gw==
 					</data>
 				</dict>
 				<dict>
@@ -221,7 +206,7 @@
 		</dict>
 	</dict>
 	<key>Description</key>
-	<string>Generalized settings for Kaby systems 10.12.6+</string>
+	<string>Generalized settings for Coffee systems on 10.13+</string>
 	<key>Remove</key>
 	<dict>
 		<key>ACPI</key>

@@ -91,6 +91,11 @@
 				<key>ResetHDA</key>
 				<true/>
 			</dict>
+			<key>FakeID</key>
+			<dict>
+				<key>IntelGFX</key>
+				<string>0x59168086</string>
+			</dict>
 			<key>USB</key>
 			<dict>
 				<key>FixOwnership</key>
@@ -117,6 +122,8 @@
 			<false/>
 			<key>DellSMBIOSPatch</key>
 			<false/>
+			<key>FakeCPUID</key>
+			<string>0x0906E9</string>
 			<key>KernelCpu</key>
 			<false/>
 			<key>KernelLapic</key>
@@ -221,7 +228,7 @@
 		</dict>
 	</dict>
 	<key>Description</key>
-	<string>Generalized settings for Kaby systems 10.12.6+</string>
+	<string>Generalized settings for Coffee systems on 10.12.6</string>
 	<key>Remove</key>
 	<dict>
 		<key>ACPI</key>
