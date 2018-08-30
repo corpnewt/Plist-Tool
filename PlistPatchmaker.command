@@ -6,10 +6,12 @@ import time
 
 script_path = os.path.dirname(os.path.realpath(__file__))
 
-def create_patch(add_plist = {}, rem_plist = {}, desc = "", gen = None):
+def create_patch(add_plist = {}, rem_plist = {}, desc = "", gen = None, strip = False):
     new_plist = { "Add": add_plist, "Remove": rem_plist, "Description": desc }
     if gen:
         new_plist["GenSMBIOS"] = gen
+    if strip:
+        new_plist["StripComments"] = True
     return new_plist
 
 def grab(prompt):
@@ -50,6 +52,7 @@ def main():
     desc      = ""
     smbios    = ""
     name      = ""
+    strip     = False
     existing_add = None
     existing_rem = None
     existing_des = None
@@ -112,10 +115,6 @@ def main():
 
     print(" ")
 
-    if add_plist == {} and rem_plist == {}:
-        print("You need to at least add or remove something...")
-        exit(1)
-
     while desc == "":
         desc = grab("Please enter the description for the patch:  ")
         if existing_des and desc == "":
@@ -124,11 +123,28 @@ def main():
     if desc == "" and existing_des:
         desc = existing_des
 
+    print("")
+
     smbios = grab("Please enter the SMBIOS to gen (leave blank for none):  ")
     if not len(smbios):
         smbios = None
 
-    plist_patch = create_patch(add_plist, rem_plist, desc, smbios)
+    print("")
+
+    while True:
+        c = grab("Would you like to strip comments with this patch? (y/n):  ")
+        if c.lower() == "y":
+            strip = True
+            break
+        elif c.lower() == "n":
+            strip = False
+            break
+
+    if add_plist == {} and rem_plist == {} and strip == False:
+        print("You need to at least add/remove something or strip comments...")
+        exit(1)
+
+    plist_patch = create_patch(add_plist, rem_plist, desc, smbios, strip)
 
     if not plist_patch:
         print("Something went wrong!")
