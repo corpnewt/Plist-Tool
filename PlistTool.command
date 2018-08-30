@@ -556,7 +556,7 @@ class PlistTool:
                 patch_plist = plist.load(f)
         except:
             patch_plist = {}
-        if not any((x in patch_plist) for x in ["Add","Remove"]):
+        if not any((x in patch_plist) for x in ["Add","Remove","StripComments"]):
             print("The patch is incomplete!  Not applied!\n")
             self.u.grab("Press [enter] to return...")
             return
@@ -565,19 +565,23 @@ class PlistTool:
         p_rem   = patch_plist.get("Remove",{})
         p_desc  = patch_plist.get("Description",patch[:-len(".plist")])
         p_gen   = patch_plist.get("GenSMBIOS",None)
+        p_str   = patch_plist.get("StripComments",False)
         print(p_desc)
         print(" ")
         menu = self.u.grab("Apply patch? (y/n):  ")
         if menu[:1].lower() == "y":
-            self.merge_patch(p_merge, p_rem, p_desc, p_gen, patch)
+            self.merge_patch(p_merge, p_rem, p_desc, p_gen, p_str, patch)
         elif menu[:1].lower() == "n":
             return
         else:
             list_patch(patch, p)
             return
 
-    def merge_patch(self, p_merge, p_rem, p_desc, p_gen, patch):
+    def merge_patch(self, p_merge, p_rem, p_desc, p_gen, p_str, patch):
         # Both plists have loaded
+        if p_str:
+            # Strip comments
+            self.plist_data = self.strip_comments(self.plist_data)
         # Remove first - then add
         self.plist_data = self.remove_entries(self.plist_data,p_rem)
         self.plist_data = self.add_entries(self.plist_data,p_merge)
