@@ -229,7 +229,7 @@ class PlistTool:
             while True:
                 self.u.head("Warning")
                 print("")
-                print("The following keys will be removed:\n\n{}\n".format(", ".join(removed_keys)))
+                print("The following SMBIOS keys will be removed:\n\n{}\n".format(", ".join(removed_keys)))
                 con = self.u.grab("Continue? (y/n):  ")
                 if con.lower() == "y":
                     # Flush settings
@@ -465,11 +465,13 @@ class PlistTool:
     def is_dict(self, val):
         return isinstance(val, (dict, plistlib._InternalDict))
     
-    def remove_entries(self, f, w):
+    def remove_entries(self, f, w, exact = False):
         # Recursively removes the entries of w from f
         if not type(f) == type(w):
             # Type mismatch - return the original
-            return f
+            # but only if we expect an exact match
+            # otherwise return an empty dict to simulate removal
+            return f if exact else {}
         # Check if all keys/values match
         if f == w:
             return {} if self.is_dict(f) else []
@@ -504,6 +506,10 @@ class PlistTool:
                         if not len(check):
                             # Found it!
                             f.remove(x)
+            elif not exact and self.is_dict(w):
+                # We're not looking for an exact match - but we found a non-collection endpoint
+                # delete it
+                del f[entry]
         return f
 
     def add_entries(self, f, w):
@@ -528,9 +534,6 @@ class PlistTool:
                 else:
                     f.append(entry)
                 continue
-            # If we're a list - time to back out
-            if not self.is_dict(w):
-                continue
             entry_val = w[entry] if self.is_dict(w) else entry
             # Set our stuff to the value
             if isinstance(entry_val, (list, dict, plistlib._InternalDict)):
@@ -546,6 +549,9 @@ class PlistTool:
                             # Changed - let's update it
                             f.remove(x)
                             f.append(check)
+            elif self.is_dict(w):
+                # Dictionary - just update the value
+                f[entry] = w[entry]
         return f
 
     def list_patch(self, patch, p):
