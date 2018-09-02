@@ -337,6 +337,8 @@ class PlistTool:
 
     def _merge_smbios(self, smbios):
         if self._key_check():
+            if not "SMBIOS" in self.plist_data:
+                self.plist_data["SMBIOS"] = {}
             self.plist_data["SMBIOS"]["ProductName"] = smbios[0]
             self.plist_data["SMBIOS"]["SerialNumber"] = smbios[1]
             self.plist_data["SMBIOS"]["BoardSerialNumber"] = smbios[2]
