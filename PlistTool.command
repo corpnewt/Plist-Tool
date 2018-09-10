@@ -339,9 +339,12 @@ class PlistTool:
         if self._key_check():
             if not "SMBIOS" in self.plist_data:
                 self.plist_data["SMBIOS"] = {}
+            if not "RtVariables" in self.plist_data:
+                self.plist_data["RtVariables"] = {}
             self.plist_data["SMBIOS"]["ProductName"] = smbios[0]
             self.plist_data["SMBIOS"]["SerialNumber"] = smbios[1]
             self.plist_data["SMBIOS"]["BoardSerialNumber"] = smbios[2]
+            self.plist_data["RtVariables"]["MLB"] = smbios[2]
             self.plist_data["SMBIOS"]["SmUUID"] = smbios[3]
             with open(self.plist, "wb") as f:
                 plist.dump(self.plist_data, f)
