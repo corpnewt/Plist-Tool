@@ -118,7 +118,6 @@ class PlistTool:
             z.extractall(os.path.join(temp,btemp))
         script_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)),self.scripts)
         for x in os.listdir(os.path.join(temp,btemp)):
-            print(x)
             if "macserial" in x.lower():
                 # Found one
                 print(" - Found {}".format(x))
@@ -141,13 +140,16 @@ class PlistTool:
             self.u.grab("Press [enter] to return...")
             return
         macurl,winurl = urls[0],urls[1]
-        print(" - MacURL: {}\n - WinURL: {}\n".format(macurl,winurl))
         # Download the zips
         temp = tempfile.mkdtemp()
         cwd = os.getcwd()
         try:
-            self._download_and_extract(temp,macurl)
-            self._download_and_extract(temp,winurl)
+            if os.name != "nt":
+                print(" - MacURL: {}\n".format(winurl))
+                self._download_and_extract(temp,macurl)
+            else:
+                print(" - WinURL: {}\n".format(winurl))
+                self._download_and_extract(temp,winurl)
         except Exception as e:
             print("We ran into some problems :(\n\n{}".format(e))
         print("Cleaning up...")
@@ -172,11 +174,41 @@ class PlistTool:
             self.u.grab("Press [enter] to return...")
             return None
 
+    def _new_plist(self):
+        self.u.head("Create New Plist")
+        print("")
+        print("M. Return to the Plist Selection Menu")
+        print("Q. Quit")
+        print("")
+        p = self.u.grab("Please type a path/name for your plist:  ")
+        if p.lower() == "q":
+            self.u.custom_quit()
+        elif p.lower() == "m":
+            return
+        p_path = self.u.check_path(p)
+        if p_path:
+            while True:
+                self.u.head("Plist Exists!")
+                print("")
+                print("{} already exists!")
+                print("")
+                p_o = self.u.grab("Overwrite? (y/n):  ")
+                if p_o.lower() == "n":
+                    self._new_plist()
+                    return
+                elif p_o.lower() == "y":
+                    self.plist = p_path
+                    self.plist_data = {}
+                    return
+        self.plist = p
+        self.plist_data = {}
+
     def _get_plist(self):
         self.u.head("Select Plist")
         print("")
         print("Current Plist:  {}".format(self.plist))
         print("")
+        print("N. New Plist")
         print("C. Clear Selection")
         print("M. Return To Menu")
         print("Q. Quit")
@@ -189,6 +221,9 @@ class PlistTool:
         elif p.lower() == "c":
             self.plist = None
             self.plist_data = None
+            return
+        elif p.lower() == "n":
+            self._new_plist()
             return
         
         pc = self.u.check_path(p)
@@ -320,7 +355,9 @@ class PlistTool:
             self.u.grab("Press [enter] to return...")
             return
         merged = False
-        if self.plist_data and self.plist and os.path.exists(self.plist):
+        print(self.plist_data, self.plist)
+        if not None in [self.plist_data, self.plist]:
+            print("Got values")
             # Let's apply - got a valid file, and plist data
             merged = self._merge_smbios(smbios[0])
         self.u.head("{} SMBIOS Info".format(smbios[0][0]))
