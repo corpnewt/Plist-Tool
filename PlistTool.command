@@ -4,7 +4,7 @@ import os, tempfile, datetime, shutil, time, json, sys, plistlib, copy, zipfile,
 
 class PlistTool:
 
-    def __init__(self):
+    def __init__(self, update = True):
         # Set our working dir to the script itself
         os.chdir(os.path.dirname(os.path.realpath(__file__)))
         # Setup some initial vars
@@ -49,7 +49,10 @@ class PlistTool:
             self.macserial = self._get_binary("macserial32.exe")
         else:
             self.macserial = self._get_binary("macserial")
-        self.remote = self._get_remote_version()
+        if update:
+            self.remote = self._get_remote_version()
+        else:
+            self.remote = "0.0.0"
         self.okay_keys = [
             "SerialNumber",
             "BoardSerialNumber",
@@ -357,9 +360,7 @@ class PlistTool:
             self.u.grab("Press [enter] to return...")
             return
         merged = False
-        print(self.plist_data, self.plist)
         if not None in [self.plist_data, self.plist]:
-            print("Got values")
             # Let's apply - got a valid file, and plist data
             merged = self._merge_smbios(smbios[0])
         self.u.head("{} SMBIOS Info".format(smbios[0][0]))
@@ -511,7 +512,7 @@ class PlistTool:
     
     def remove_entries(self, f, w, exact = False):
         # Recursively removes the entries of w from f
-        if not type(f) == type(w):
+        if type(f) != type(w) and not (self.is_dict(f) and self.is_dict(w)):
             # Type mismatch - return the original
             # but only if we expect an exact match
             # otherwise return an empty dict to simulate removal
@@ -537,6 +538,9 @@ class PlistTool:
             if isinstance(entry_val, (list, dict, plistlib._InternalDict)):
                 if self.is_dict(w):
                     # Just need to compare with keys
+                    if not entry in f:
+                        # Doesn't exist to begin - bypass
+                        continue
                     test = self.remove_entries(f[entry],w[entry])
                     del f[entry]
                     if len(test):
@@ -560,8 +564,9 @@ class PlistTool:
         # Recursively adds entries of w to f
         if f == w:
             return f
-        if type(f) != type(w):
+        if type(f) != type(w) and not (self.is_dict(f) and self.is_dict(w)):
             # Different types - override f with w
+            print("F:\n{}\n\nW:\n{}".format(f, w))
             return w
         # Handle dicts
         if self.is_dict(f) and self.dict_check(w,f):
@@ -598,61 +603,72 @@ class PlistTool:
                 f[entry] = w[entry]
         return f
 
-    def list_patch(self, patch, p):
-        self.u.head("{}".format(patch[:-len(".plist")]))
-        print(" ")
+    def list_patch(self, patch, p, force = False):
+        if not force:
+            self.u.head("{}".format(patch[:-len(".plist")]))
+            print(" ")
         try:
             with open(p,"rb") as f:
                 patch_plist = plist.load(f)
         except:
             patch_plist = {}
-        if not any((x in patch_plist) for x in ["Add","Remove","StripComments"]):
-            print("The patch is incomplete!  Not applied!\n")
-            self.u.grab("Press [enter] to return...")
-            return
+        if not any((x in patch_plist) for x in ["Add","Remove","StripComments","GenSMBIOS"]):
+            if not force:
+                print("The patch is incomplete!  Not applied!\n")
+                self.u.grab("Press [enter] to return...")
+            return (False, "")
         # Gather our info
-        p_merge = patch_plist.get("Add",{})
-        p_rem   = patch_plist.get("Remove",{})
+        p_merge = patch_plist.get("Add",None)
+        p_rem   = patch_plist.get("Remove",None)
         p_desc  = patch_plist.get("Description",patch[:-len(".plist")])
         p_gen   = patch_plist.get("GenSMBIOS",None)
         p_str   = patch_plist.get("StripComments",False)
-        print(p_desc)
-        print(" ")
-        menu = self.u.grab("Apply patch? (y/n):  ")
-        if menu[:1].lower() == "y":
-            self.merge_patch(p_merge, p_rem, p_desc, p_gen, p_str, patch)
-        elif menu[:1].lower() == "n":
-            return
+        if not force:
+            print(p_desc)
+            print(" ")
+            menu = self.u.grab("Apply patch? (y/n):  ")
         else:
-            list_patch(patch, p)
-            return
+            menu = "y"
+        if menu[:1].lower() == "y":
+            return self.merge_patch(p_merge, p_rem, p_desc, p_gen, p_str, patch, force)
+        elif menu[:1].lower() == "n":
+            return None
+        else:
+            return list_patch(patch, p, force)
 
-    def merge_patch(self, p_merge, p_rem, p_desc, p_gen, p_str, patch):
+    def merge_patch(self, p_merge, p_rem, p_desc, p_gen, p_str, patch, force = False):
         # Both plists have loaded
         if p_str:
             # Strip comments
             self.plist_data = self.strip_comments(self.plist_data)
         # Remove first - then add
-        self.plist_data = self.remove_entries(self.plist_data,p_rem)
-        self.plist_data = self.add_entries(self.plist_data,p_merge)
+        if p_rem:
+            self.plist_data = self.remove_entries(self.plist_data,p_rem)
+        if p_merge:
+            self.plist_data = self.add_entries(self.plist_data,p_merge)
         merged = False
+        out = p_desc
         if p_gen:
             try:
                 smbios = self._get_smbios(p_gen)
                 merged = self._merge_smbios(smbios[0])
             except:
                 pass
-        self.u.head("Applying {}".format(patch[:-len(".plist")]))
-        print(" ")
-        print(p_desc)
-        print(" ")
-        if p_gen and not merged:
-            print("SMBIOS NOT generated!")
+        if not force:
+            self.u.head("Applying {}".format(patch[:-len(".plist")]))
+            print(" ")
+            print(p_desc)
+            print(" ")
+            if p_gen and not merged:
+                print("SMBIOS NOT generated!")
+                out += "\n  - SMBIOS NOT generated!"
         # Write the new file
         with open(self.plist, "wb") as f:
             plist.dump(self.plist_data, f)
-        print("Done!\n")
-        self.u.grab("Press [enter] to return...")
+        if not force:
+            print("Done!\n")
+            self.u.grab("Press [enter] to return...")
+        return (True, out)
 
     def add_patches(self):
         self.u.resize(80, 24)
@@ -954,6 +970,39 @@ class PlistTool:
                 self.u.grab("Press [enter] to return...")
         self.main()
 
+    def quiet_patch(self, patches):
+        # Iterates through the patches quietly applying them
+        patch_pairs = zip(*[iter(patches)]*2)
+        for pair in patch_pairs:
+            try:
+                # Organize the patch path and name
+                patch_path = self.u.check_path(pair[0])
+                patch_name = os.path.basename(patch_path)
+                # Check our target plist
+                save_config = self.u.check_path(pair[1])
+                if not save_config:
+                    # Looks like it's a new one
+                    self.plist = pair[1]
+                    self.plist_data = {}
+                else:
+                    # We have an existing plist - load it
+                    self.plist = save_config
+                    with open(self.plist,"rb") as f:
+                        self.plist_data = plist.load(f)
+                # Apply the patch - and force
+                self.list_patch(patch_name, patch_path, force = True)
+            except Exception as e:
+                print(str(e))
+
 if __name__ == '__main__':
-    p = PlistTool()
-    p.main()
+    if len(sys.argv) >= 3:
+        # We got command line args!
+        # Formatted like so:
+        #
+        # PlistTool.command /path/to/patch.plist /path/to/config.plist
+        p = PlistTool(False)
+        p.quiet_patch(sys.argv[1:])
+    else:
+        # No args - let's start interactive
+        p = PlistTool()
+        p.main()
