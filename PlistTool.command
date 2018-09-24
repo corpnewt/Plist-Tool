@@ -31,7 +31,11 @@ class PlistTool:
                 "rootless=0",
                 "-disablegfxfirmware",
                 "debug=0x100",
-                "keepsyms=1"
+                "keepsyms=1",
+                "-lilubetaall",
+                "-igfxnohdmi",
+                "-cdfon",
+                "-no_compat_check"
         ]
         self.plist_dict_checks = [
             {"match":["Find","Replace"]},
