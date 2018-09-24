@@ -974,38 +974,65 @@ class PlistTool:
                 self.u.grab("Press [enter] to return...")
         self.main()
 
-    def quiet_patch(self, patches):
+    def quiet_patch(self, patches, output):
         # Iterates through the patches quietly applying them
-        patch_pairs = zip(*[iter(patches)]*2)
-        for pair in patch_pairs:
+        save_config = self.u.check_path(output)
+        if not save_config:
+            # Looks like it's a new one
+            self.plist = output
+            self.plist_data = {}
+        else:
+            # We have an existing plist - load it
+            self.plist = save_config
+            try:
+                with open(self.plist,"rb") as f:
+                    self.plist_data = plist.load(f)
+            except Exception as e:
+                # No dice loading the config... bail
+                self.u.head("Config Failed To Load")
+                print("")
+                print(str(e))
+                print("")
+                exit(1)
+        if len(patches) == 1:
+            self.u.head("Applying 1 Patch")
+        else:
+            self.u.head("Applying {} Patches".format(len(patches)))
+        print("")
+        # Let's loop through patches!
+        for patch in patches:
+            print("Got {}...".format(os.path.basename(patch)))
             try:
                 # Organize the patch path and name
-                patch_path = self.u.check_path(pair[0])
+                patch_path = self.u.check_path(patch)
+                # Make sure it exists - bail if it doesn't
+                if not patch_path:
+                    print(" - Failed!")
+                    print(" ** File doesn't exist! **")
+                    print("")
+                    continue
                 patch_name = os.path.basename(patch_path)
-                # Check our target plist
-                save_config = self.u.check_path(pair[1])
-                if not save_config:
-                    # Looks like it's a new one
-                    self.plist = pair[1]
-                    self.plist_data = {}
-                else:
-                    # We have an existing plist - load it
-                    self.plist = save_config
-                    with open(self.plist,"rb") as f:
-                        self.plist_data = plist.load(f)
                 # Apply the patch - and force
-                self.list_patch(patch_name, patch_path, force = True)
+                print(" - Applying...")
+                out = self.list_patch(patch_name, patch_path, force = True)
+                if out[0]:
+                    print(" - Success!")
+                else:
+                    print(" - Failed!")
+                    print(" ** {} **".format(out[1]))
             except Exception as e:
-                print(str(e))
+                print(" - Failed!")
+                print(" ** {} **".format(str(e)))
+            print("")
 
 if __name__ == '__main__':
     if len(sys.argv) >= 3:
         # We got command line args!
         # Formatted like so:
         #
-        # PlistTool.command /path/to/patch.plist /path/to/config.plist
+        # PlistTool.command /path/to/patch1.plist /path/to/patch2.plist /path/to/output/config.plist
         p = PlistTool(False)
-        p.quiet_patch(sys.argv[1:])
+        p.quiet_patch(sys.argv[1:-1], sys.argv[-1])
     else:
         # No args - let's start interactive
         p = PlistTool()
