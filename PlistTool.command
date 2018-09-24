@@ -185,12 +185,14 @@ class PlistTool:
             self.u.custom_quit()
         elif p.lower() == "m":
             return
+        if not p.lower().endswith(".plist"):
+            p = p+".plist"
         p_path = self.u.check_path(p)
         if p_path:
             while True:
                 self.u.head("Plist Exists!")
                 print("")
-                print("{} already exists!")
+                print("{} already exists!".format(os.path.basename(p_path)))
                 print("")
                 p_o = self.u.grab("Overwrite? (y/n):  ")
                 if p_o.lower() == "n":
