@@ -255,7 +255,7 @@ class PlistTool:
             self._get_plist()
         self.plist = pc
 
-    def _key_check(self):
+    def _key_check(self, force = False):
         # Function to verify our SMBIOS only has needed keys
         if not self.plist and not self.plist_data:
             return False
@@ -271,10 +271,13 @@ class PlistTool:
                 new_smbios[key] = key_check[key]
         if len(removed_keys):
             while True:
-                self.u.head("Warning")
-                print("")
-                print("The following SMBIOS keys will be removed:\n\n{}\n".format(", ".join(removed_keys)))
-                con = self.u.grab("Continue? (y/n):  ")
+                if not force:
+                    self.u.head("Warning")
+                    print("")
+                    print("The following SMBIOS keys will be removed:\n\n{}\n".format(", ".join(removed_keys)))
+                    con = self.u.grab("Continue? (y/n):  ")
+                else:
+                    con = "y"
                 if con.lower() == "y":
                     # Flush settings
                     self.plist_data["SMBIOS"] = new_smbios
@@ -379,8 +382,8 @@ class PlistTool:
             print("")
         self.u.grab("Press [enter] to return...")
 
-    def _merge_smbios(self, smbios):
-        if self._key_check():
+    def _merge_smbios(self, smbios, force = False):
+        if self._key_check(force):
             if not "SMBIOS" in self.plist_data:
                 self.plist_data["SMBIOS"] = {}
             if not "RtVariables" in self.plist_data:
@@ -561,7 +564,8 @@ class PlistTool:
             elif not exact and self.is_dict(w):
                 # We're not looking for an exact match - but we found a non-collection endpoint
                 # delete it
-                del f[entry]
+                if entry in f:
+                    del f[entry]
         return f
 
     def add_entries(self, f, w):
@@ -655,7 +659,7 @@ class PlistTool:
         if p_gen:
             try:
                 smbios = self._get_smbios(p_gen)
-                merged = self._merge_smbios(smbios[0])
+                merged = self._merge_smbios(smbios[0], force)
             except:
                 pass
         if not force:
