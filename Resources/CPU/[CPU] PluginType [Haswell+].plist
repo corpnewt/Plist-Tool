@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Add</key>
+	<dict>
+		<key>ACPI</key>
+		<dict>
+			<key>DropTables</key>
+			<array>
+				<dict>
+					<key>Signature</key>
+					<string>DMAR</string>
+				</dict>
+				<dict>
+					<key>Signature</key>
+					<string>MATS</string>
+				</dict>
+			</array>
+			<key>SSDT</key>
+			<dict>
+				<key>DropOem</key>
+				<false/>
+				<key>Generate</key>
+				<dict>
+					<key>PluginType</key>
+					<true/>
+				</dict>
+			</dict>
+		</dict>
+		<key>KernelAndKextPatches</key>
+		<dict>
+			<key>KernelPm</key>
+			<true/>
+		</dict>
+	</dict>
+	<key>Description</key>
+	<string>Generalized settings for Kaby systems 10.11 - 10.12.5</string>
+	<key>Remove</key>
+	<dict>
+		<key>ACPI</key>
+		<dict>
+			<key>DSDT</key>
+			<dict>
+				<key>SSDT</key>
+				<dict/>
+			</dict>
+		</dict>
+	</dict>
+</dict>
+</plist>
