@@ -8,18 +8,14 @@
 		<dict>
 			<key>DSDT</key>
 			<dict>
-				<key>Debug</key>
-				<false/>
+				<key>FixHeaders</key>
+				<true/>
+				<key>AutoMerge</key>
+				<true/>
 				<key>DropOEM_DSM</key>
 				<false/>
 				<key>Fixes</key>
 				<dict>
-					<key>AddMCHC</key>
-					<true/>
-					<key>FixHPET</key>
-					<true/>
-					<key>FixHeaders</key>
-					<true/>
 					<key>FixIPIC</key>
 					<true/>
 					<key>FixRTC</key>
@@ -29,8 +25,6 @@
 					<key>FixTMR</key>
 					<true/>
 				</dict>
-				<key>Name</key>
-				<string>DSDT.aml</string>
 				<key>Patches</key>
 				<array>
 					<dict>
@@ -39,13 +33,9 @@
 						<key>Disabled</key>
 						<false/>
 						<key>Find</key>
-						<data>
-						RUhDMQ==
-						</data>
+						<data>RUhDMQ==</data>
 						<key>Replace</key>
-						<data>
-						RUgwMQ==
-						</data>
+						<data>RUgwMQ==</data>
 					</dict>
 					<dict>
 						<key>Comment</key>
@@ -53,13 +43,9 @@
 						<key>Disabled</key>
 						<false/>
 						<key>Find</key>
-						<data>
-						RUhDMg==
-						</data>
+						<data>RUhDMg==</data>
 						<key>Replace</key>
-						<data>
-						RUgwMg==
-						</data>
+						<data>RUgwMg==</data>
 					</dict>
 					<dict>
 						<key>Comment</key>
@@ -67,17 +53,11 @@
 						<key>Disabled</key>
 						<false/>
 						<key>Find</key>
-						<data>
-						U0FUMA==
-						</data>
+						<data>U0FUMA==</data>
 						<key>Replace</key>
-						<data>
-						U0FUQQ==
-						</data>
+						<data>U0FUQQ==</data>
 					</dict>
 				</array>
-				<key>ReuseFFFF</key>
-				<false/>
 			</dict>
 			<key>DropTables</key>
 			<array>
@@ -96,10 +76,6 @@
 				<false/>
 				<key>Generate</key>
 				<dict>
-					<key>CStates</key>
-					<false/>
-					<key>PStates</key>
-					<false/>
 					<key>PluginType</key>
 					<true/>
 				</dict>
@@ -112,6 +88,18 @@
 		</dict>
 		<key>Devices</key>
 		<dict>
+			<key>Properties</key>
+			<dict>
+				<key>PciRoot(0)/Pci(0x02,0)</key>
+				<dict>
+					<key>AAPL,ig-platform-id</key>
+					<data>AwAiDQ==</data>
+					<key>#Patchings</key>
+					<string>Add your patches after the the framebuffer-patch-enable</string>
+					<key>framebuffer-patch-enable</key>
+					<integer>1</integer>
+				</dict>
+			</dict>
 			<key>Audio</key>
 			<dict>
 				<key>Inject</key>
@@ -123,6 +111,10 @@
 			<dict>
 				<key>FixOwnership</key>
 				<true/>
+				<key>AddClockID</key>
+				<true/>
+				<key>Inject</key>
+				<true/>
 			</dict>
 		</dict>
 		<key>Graphics</key>
@@ -130,29 +122,17 @@
 			<key>Inject</key>
 			<dict>
 				<key>Intel</key>
-				<true/>
+				<false/>
 			</dict>
-			<key>ig-platform-id</key>
-			<string>0x0d220003</string>
 		</dict>
 		<key>KernelAndKextPatches</key>
 		<dict>
-			<key>AppleIntelCPUPM</key>
-			<true/>
 			<key>AppleRTC</key>
 			<true/>
-			<key>Debug</key>
-			<false/>
 			<key>DellSMBIOSPatch</key>
-			<false/>
-			<key>KernelCpu</key>
-			<false/>
-			<key>KernelLapic</key>
 			<false/>
 			<key>KernelPm</key>
 			<true/>
-			<key>KernelXCPM</key>
-			<false/>
 			<key>KextsToPatch</key>
 			<array>
 				<dict>
@@ -161,87 +141,13 @@
 					<key>Disabled</key>
 					<false/>
 					<key>Find</key>
-					<data>
-					RXh0ZXJuYWw=
-					</data>
+					<data>RXh0ZXJuYWw=</data>
+					<key>InfoPlistPatch</key>
+					<false/>
 					<key>Name</key>
 					<string>AppleAHCIPort</string>
 					<key>Replace</key>
-					<data>
-					SW50ZXJuYWw=
-					</data>
-				</dict>
-				<dict>
-					<key>Comment</key>
-					<string>change 15 port limit to 26 in XHCI kext 10.12</string>
-					<key>Disabled</key>
-					<false/>
-					<key>Find</key>
-					<data>
-					g710////EA==
-					</data>
-					<key>MatchOS</key>
-					<string>10.12.x</string>
-					<key>Name</key>
-					<string>AppleUSBXHCIPCI</string>
-					<key>Replace</key>
-					<data>
-					g710////Gw==
-					</data>
-				</dict>
-				<dict>
-					<key>Comment</key>
-					<string>change 15 port limit to 30 in AppleUSBXHCIPCI</string>
-					<key>Disabled</key>
-					<false/>
-					<key>Find</key>
-					<data>
-					g72M/v//EA==
-					</data>
-					<key>MatchOS</key>
-					<string>10.11.x</string>
-					<key>Name</key>
-					<string>AppleUSBXHCIPCI</string>
-					<key>Replace</key>
-					<data>
-					g72M/v//Hw==
-					</data>
-				</dict>
-				<dict>
-					<key>Comment</key>
-					<string>Change 15 port limit to 24 in XHCI kext 10.13</string>
-					<key>Disabled</key>
-					<true/>
-					<key>Find</key>
-					<data>
-					g32MEA==
-					</data>
-					<key>MatchOS</key>
-					<string>10.13.x</string>
-					<key>Name</key>
-					<string>AppleUSBXHCIPCI</string>
-					<key>Replace</key>
-					<data>
-					g32MGw==
-					</data>
-				</dict>
-				<dict>
-					<key>Comment</key>
-					<string>Remove 15 USB port limit from PMHeart 10.13.4+</string>
-					<key>Disabled</key>
-					<false/>
-					<key>Find</key>
-					<data>
-					g32UDw+DlwQAAA==
-					</data>
-					<key>MatchOS</key>
-					<string>10.13.x</string>
-					<key>Name</key>
-					<string>AppleUSBXHCIPCI</string>
-					<key>Replace</key>
-					<data>
-					g32UD5CQkJCQkA==
-					</data>
+					<data>SW50ZXJuYWw=</data>
 				</dict>
 			</array>
 		</dict>
@@ -267,8 +173,7 @@
 			<key>DSDT</key>
 			<dict>
 				<key>Fixes</key>
-				<dict>
-				</dict>
+				<dict/>
 			</dict>
 		</dict>
 	</dict>

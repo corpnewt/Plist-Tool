@@ -3,21 +3,16 @@
 <plist version="1.0">
 <dict>
 	<key>Add</key>
+	<dict/>
+	<key>Remove</key>
 	<dict>
 		<key>Devices</key>
 		<dict>
 			<key>USB</key>
-			<dict>
-				<key>FixOwnership</key>
-				<true/>
-				<key>Inject</key>
-				<true/>
-			</dict>
+			<dict/>
 		</dict>
 	</dict>
-	<key>Remove</key>
-	<dict/>
 	<key>Description</key>
-	<string>Enables USB FixOwnership and Injection - can bypass stall at Enable Legacy Matching.</string>
+	<string>Removes USB FixOwnership and Injection - can bypass stall at Enable Legacy Matching.</string>
 </dict>
 </plist>

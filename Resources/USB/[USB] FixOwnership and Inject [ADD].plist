@@ -4,15 +4,22 @@
 <dict>
 	<key>Add</key>
 	<dict>
-		<key>KernelAndKextPatches</key>
+		<key>Devices</key>
 		<dict>
-			<key>FakeCPUID</key>
-			<string>0x0506E3</string>
+			<key>USB</key>
+			<dict>
+				<key>FixOwnership</key>
+				<true/>
+				<key>AddClockID</key>
+				<true/>
+				<key>Inject</key>
+				<true/>
+			</dict>
 		</dict>
 	</dict>
 	<key>Remove</key>
 	<dict/>
 	<key>Description</key>
-	<string>Adds the FakeCPUID of 0x0506E3 for Kaby Lake CPUs.</string>
+	<string>Enables USB FixOwnership and Injection - can bypass stall at Enable Legacy Matching.</string>
 </dict>
 </plist>
