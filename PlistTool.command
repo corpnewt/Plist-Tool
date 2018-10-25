@@ -220,7 +220,7 @@ class PlistTool:
         print("M. Return To Menu")
         print("Q. Quit")
         print("")
-        p = self.u.grab("Please draga and drop the target plist:  ")
+        p = self.u.grab("Please drag and drop the target plist:  ")
         if p.lower() == "q":
             self.u.custom_quit()
         elif p.lower() == "m":
