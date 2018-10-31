@@ -150,7 +150,7 @@ class PlistTool:
         cwd = os.getcwd()
         try:
             if os.name != "nt":
-                print(" - MacURL: {}\n".format(winurl))
+                print(" - MacURL: {}\n".format(macurl))
                 self._download_and_extract(temp,macurl)
             else:
                 print(" - WinURL: {}\n".format(winurl))
