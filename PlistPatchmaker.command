@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 import plistlib
 import os
 import sys
