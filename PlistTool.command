@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 from Scripts import *
 import os, tempfile, datetime, shutil, time, json, sys, plistlib, copy, zipfile, uuid
 
@@ -267,6 +267,9 @@ class PlistTool:
             else:
                 # Build our new SMBIOS
                 new_smbios[key] = key_check[key]
+        # We want the SmUUID to be the top-level - remove CustomUUID if exists
+        if "CustomUUID" in self.plist_data.get("SystemParameters",{}):
+            removed_keys.append("CustomUUID")
         if len(removed_keys):
             while True:
                 if not force:
@@ -279,6 +282,8 @@ class PlistTool:
                 if con.lower() == "y":
                     # Flush settings
                     self.plist_data["SMBIOS"] = new_smbios
+                    # Remove the CustomUUID if present
+                    self.plist_data.get("SystemParameters",{}).pop("CustomUUID", None)
                     break
                 elif con.lower() == "n":
                     return False
@@ -382,15 +387,15 @@ class PlistTool:
 
     def _merge_smbios(self, smbios, force = False):
         if self._key_check(force):
-            if not "SMBIOS" in self.plist_data:
-                self.plist_data["SMBIOS"] = {}
-            if not "RtVariables" in self.plist_data:
-                self.plist_data["RtVariables"] = {}
+            for x in ["SMBIOS","RtVariables","SystemParameters"]:
+                if not x in self.plist_data:
+                    self.plist_data[x] = {}
             self.plist_data["SMBIOS"]["ProductName"] = smbios[0]
             self.plist_data["SMBIOS"]["SerialNumber"] = smbios[1]
             self.plist_data["SMBIOS"]["BoardSerialNumber"] = smbios[2]
             self.plist_data["RtVariables"]["MLB"] = smbios[2]
             self.plist_data["SMBIOS"]["SmUUID"] = smbios[3]
+            self.plist_data["SystemParameters"]["InjectSystemID"] = True
             with open(self.plist, "wb") as f:
                 plist.dump(self.plist_data, f)
             return True
