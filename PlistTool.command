@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from Scripts import *
-import os, tempfile, datetime, shutil, time, json, sys, plistlib, copy, zipfile, uuid
+import os, sys, tempfile, datetime, shutil, time, json, sys, plistlib, copy, zipfile, uuid
 
 class PlistTool:
 
@@ -476,13 +476,13 @@ class PlistTool:
         temp_item = {} if self.is_dict(item) else []
         for entry in item:
             # Get the value itself
-            entry_val = item[entry] if isinstance(item, (dict, plistlib._InternalDict)) else entry
+            entry_val = item[entry] if self.is_dict(entry) else entry
             # Check strings first
             if isinstance(entry, plist._get_inst()) and entry.startswith(prefix):
                 # Skip it
                 continue
             # Check if the item itself is a collection
-            if isinstance(entry_val, (list, dict, plistlib._InternalDict)):
+            if isinstance(entry_val, list) or self.is_dict(entry_val):
                 # It is, check it too
                 ret_val = self.strip_comments(entry_val)
                 if not len(ret_val):
@@ -518,7 +518,10 @@ class PlistTool:
             return val2.startswith(val1[:-1])
 
     def is_dict(self, val):
-        return isinstance(val, (dict, plistlib._InternalDict))
+        if sys.version_info >= (3, 0):
+            return isinstance(val, dict)
+        else:
+            return isinstance(val, (dict, plistlib._InternalDict))
     
     def remove_entries(self, f, w, exact = False):
         # Recursively removes the entries of w from f
@@ -545,7 +548,7 @@ class PlistTool:
             # Get the value of the item
             entry_val = w[entry] if self.is_dict(w) else entry
             # Check if the item itself is a collection
-            if isinstance(entry_val, (list, dict, plistlib._InternalDict)):
+            if isinstance(entry_val, list) or self.is_dict(entry_val):
                 if self.is_dict(w):
                     # Just need to compare with keys
                     if not entry in f:
@@ -596,7 +599,7 @@ class PlistTool:
                 continue
             entry_val = w[entry] if self.is_dict(w) else entry
             # Set our stuff to the value
-            if isinstance(entry_val, (list, dict, plistlib._InternalDict)):
+            if isinstance(entry_val, list) or self.is_dict(entry_val):
                 if self.is_dict(w):
                     test = self.add_entries(f[entry],w[entry])
                     if len(test):
