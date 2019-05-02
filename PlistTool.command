@@ -50,7 +50,7 @@ class PlistTool:
         self.u = utils.Utils("Plist Tool")
         self.d = downloader.Downloader()
         self.r = run.Run()
-        self.url = "https://github.com/acidanthera/macserial/releases/latest"
+        self.url = "https://github.com/acidanthera/MacInfoPkg/releases/latest"
         self.plist = None
         self.plist_data = None
         if os.name == "nt":
